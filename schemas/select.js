@@ -1,15 +1,12 @@
 var mongoose = require('mongoose');
 
-var courseSchema = new mongoose.Schema({
+var selectSchema = new mongoose.Schema({
+  userid: Number,
   courseid: Number,
-  coursename: String,
-  courseplace: String, 
-  coursetime: {
-    weekstart: Number,
-    weekend: Number,
-    start: Number,
-    end: Number
-  },
+  problem: [{
+    problemid: Number,
+    choiceid: Number
+  }],
   meta: {
     createAt: {
       type: Date,
@@ -22,8 +19,8 @@ var courseSchema = new mongoose.Schema({
   }
 });
 
-courseSchema.pre('save', function(next) {
-  var course = this;
+selectSchema.pre('save', function(next) {
+  var slect = this;
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now();
   }
@@ -32,4 +29,4 @@ courseSchema.pre('save', function(next) {
   }
 });
 
-module.exports = courseSchema;
+module.exports = selectSchema;

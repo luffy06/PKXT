@@ -5,13 +5,11 @@ var SALT_WORK_FACTOR = 10;
 var userScema = new mongoose.Schema({
   // 用户ID
   userid: {
-    type: String,
+    type: Number,
     unique: true
   },
   // 用户名
   username: String,
-  // 用户性别
-  usersex: Number,
   // 用户密码
   password: String,
   // 用户角色: student, teacher, specialist, leader, supervisor, other
@@ -19,10 +17,16 @@ var userScema = new mongoose.Schema({
     type: String,
     default: 'student'
   },
-  // 专业ID
-  majorid: Number,
-  // 年级
-  grade: Number
+  meta: {
+    createAt: {
+      type: Date,
+      default: Date.now()
+    }, 
+    updateAt: {
+      type: Date,
+      default: Date.now()
+    }
+  }
 });
 
 userSchema.pre('save', function(next) {
