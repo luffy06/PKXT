@@ -3,19 +3,24 @@ var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 10;
 
 var userScema = new mongoose.Schema({
-  // 用户ID
-  userid: {
+  // user ID
+  id: {
     type: Number,
     unique: true
   },
-  // 用户名
-  username: String,
-  // 用户密码
-  password: String,
-  // 用户角色: student, teacher, specialist, leader, supervisor, other
+  // user name
+  name: String,
+  // user password
+  pass: String,
+  // user role: student, teacher, specialist, leader, supervisor, other
   role: {
     type: String,
     default: 'student'
+  },
+  // the MAC address of the user's device
+  mac_address: {
+    type: String,
+    default: 'unknown'
   },
   meta: {
     createAt: {
@@ -32,7 +37,7 @@ var userScema = new mongoose.Schema({
 userSchema.pre('save', function(next) {
   var user = this;
 
-  // 设置更新时间
+  // set updating time
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now()
   }
@@ -40,59 +45,65 @@ userSchema.pre('save', function(next) {
     this.meta.updateAt = Date.now()
   }
 
-  // 利用bcrypt进行加密
+  // use bcrypt to encrypt
   bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
     if (err)
       return next(err);
-    bcrypt.hash(user.password, salt, function(err, hash) {
+    bcrypt.hash(user.pass, salt, function(err, hash) {
       if (err)
         return next(err);
-      user.password = hash;
+      user.pass = hash;
       next();
     })
   })
 });
 
-// 自定义方法
+// custom method
 userSchema.methods = {
-  // 比较密码
-  comparePassword: function(password, cb) {
-    bcrypt.compare(password, this.password, function(err, isMatch) {
+  // compare password
+  comparePassword: function(pass, cb) {
+    bcrypt.compare(pass, this.pass, function(err, isMatch) {
       if (err) 
         return cb(err);
       cb(null, isMatch);
     });
   },
-  // 更新密码
-  updatepsw: function(password, cb) {
+  // update password
+  updatepsw: function(pass, cb) {
     var user = this;
 
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
       if (err)
         return cb(err);
-      bcrypt.hash(password, salt, function(err, hash) {
+      bcrypt.hash(pass, salt, function(err, hash) {
         if (err)
           return cb(err);
-        user.password = hash;
+        user.pass = hash;
         cb(null);
       });
     })
   }
 }
 
-// 静态方法
+// statics method
 userSchema.statics = {
-  // 根据cmp来获取更新用户并排序
+  // use user's role level to sort order by cmp
   fetch: function(cmp, cb) {
     return this
       .find({})
       .sort({'role': cmp})
       .exec(cb)
   },
-  // 依据用户名查找用户
+  // use user's name to find user
   findByName: function(name, cb) {
     return this
       .findOne({name: name})
+      .exec(cb)
+  },
+  // use user's MAC address to find user
+  findByMAC: function(mac_address, cb) {
+    return this
+      .findOne({mac_address: mac_address})
       .exec(cb)
   }
 }
