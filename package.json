@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "bcrypt": "0.8.5",
+    "bcryptjs": "2.3.0",
     "body-parser": "~1.13.2",
     "connect": "^3.4.0",
     "connect-mongo": "^0.8.2",
