@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var UserSchema = require('../schema/user');
+var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 
 exports.login = function(req, res) {

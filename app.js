@@ -2,8 +2,11 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var session = require('express-session');
+var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
 var mongoose = require('mongoose');
 var mongoStore = require('connect-mongo')(session);
 
@@ -48,9 +51,14 @@ app.use(function(req, res, next) {
   next()
 });
 
-app.use('/', function(req, res) {
-  res.render('index', { title: '评课系统' });
+app.use(index);
+
+app.use('/user/logout', function(req, res) {
+  delete req.session.user;
+  delete app.locals.user;
+  return res.redirect('/');
 });
+
 app.use('/user', user);
 app.use('/course', course);
 

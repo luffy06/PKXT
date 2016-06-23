@@ -20,7 +20,7 @@ var selectSchema = new mongoose.Schema({
 });
 
 selectSchema.pre('save', function(next) {
-  var slect = this;
+  var select = this;
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now();
   }
