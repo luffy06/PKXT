@@ -10,7 +10,8 @@ exports.getinfo = function(req, res) {
   Course.findOne({courseid: req_courseid}, function(err, course) {
     if (err) {
       console.log("Error Message in middlewares/course.js: " + err);
-      return res.render('error', {
+      return res.send({
+        status: "error",
         ErrMes: err
       });
     }
@@ -18,7 +19,8 @@ exports.getinfo = function(req, res) {
     // course is not exist
     if (!course) {
       console.log("Error Message in middlewares/course.js: " + req_courseid + " is not exist!");
-      return res.render('error', {
+      return res.send({
+        status: "error",
         ErrMes: err
       });
     }
@@ -34,7 +36,8 @@ exports.getinfo = function(req, res) {
     // class id is wrong
     if (userid == -1) {
       console.log("Error Message in middlewares/course.js: " + req_classid + " is not exist!");
-      return res.render('error', {
+      return res.send({
+        status: "error",
         ErrMes: err
       })
     }
@@ -44,11 +47,13 @@ exports.getinfo = function(req, res) {
 
     User.findOne({userid: userid}, function(err, user) {
       console.log("Error Message in middlewares/course.js: " + err);
-      return res.render('error', {
+      return res.send({
+        status: "error",
         ErrMes: err
       });
   
-      res.render('coureseinfo', {
+      res.send({
+        status: "success",
         title: CoureseInfo,
         coursername: course['coursername'],
         teacher: user['name']

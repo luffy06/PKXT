@@ -12,7 +12,8 @@ exports.login = function(req, res) {
   User.findOne({name: username}, function(err, user) {
     if (err) {
       console.log("Error Message in middlewares/user.js: " + err);
-      return res.render('error', {
+      return res.send({
+        status: "error",
         ErrMes: err
       });
     }
@@ -20,7 +21,8 @@ exports.login = function(req, res) {
     if (!user) {
       // user is not exist
       console.log("Error Message in middlewares/user.js: " + username + "is not exist!");
-      return res.redner('error', {
+      return res.send({
+        status: "error",
         ErrMes: (username + "is not exist!")
       });
     }
@@ -28,7 +30,8 @@ exports.login = function(req, res) {
     user.comparePassword(userpass, function(err, isMatch) {
       if (err) {
         console.log("Error Message in middlewares/user.js: " + err);
-        return res.render('error', {
+        return res.send({
+          status: "error",
           ErrMes: err
         });
       }      
@@ -36,7 +39,8 @@ exports.login = function(req, res) {
       if (!isMatch) {
         // password is wrong
         console.log(username + ": password is not match!");
-        return res.render('error', {
+        return res.send({
+          status: "error",
           ErrMes: "Password is wrong!"
         });
       }
