@@ -1,0 +1,41 @@
+<%- include('components/header') -%>
+    <div class="page-group">
+        <!-- 单个page ,第一个.page默认被展示-->
+        <div class="page page-current">
+            <!-- 标题栏 -->
+            <header class="bar bar-nav">
+                <a class="icon icon-me pull-left open-panel"></a>
+                <a class="icon icon-code pull-right"></a>
+                <h1 class="title">标题</h1>
+            </header>
+            <!-- 这里是页面内容区 -->
+            <div class="content">
+                 <div class="content-block">
+                    <div class="searchbar row">
+                        <div class="search-input col-80">
+                            <label class="icon icon-search" for="search"></label>
+                            <input type="search" id='searchinput' placeholder='输入课程号...' />
+                        </div>
+                        <a id="searchbtn" class="button button-fill button-primary col-20">搜索</a>
+                    </div>
+                </div>
+                <div class="result">
+                <!--
+                <div class="card">
+                    <div class="card-header">课程号-课程名</div>
+                    <div class="card-content">
+                        <div class="card-content-inner">
+                            <p>任课老师:</p>
+                            <p>上课地点:</p>
+                            <p>上课时间:</p>
+                        </div>
+                    </div>
+                    <div class="card-footer"><a href="/assess" class="button button-fill button-primary">开始评课</a></div>
+                </div>-->
+                </div>
+            </div>
+        </div>
+        <!-- 其他的单个page内联页（如果有） -->
+    </div>
+<%- include('components/sidebar') -%>
+<%- include('components/footer') -%>
