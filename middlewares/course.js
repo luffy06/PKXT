@@ -52,7 +52,7 @@ exports.getinfo = function(req, res) {
         ErrMes: err
       });
   
-      res.send({
+      res.render('courseinfo', {
         status: "success",
         title: CoureseInfo,
         coursername: course['coursername'],
