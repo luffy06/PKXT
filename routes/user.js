@@ -1,8 +1,14 @@
 var express = require('express');
 var user = require('../middlewares/user');
-var router = express.Router();
+var User = express.Router();
 
 
-router.post('/login', user.login);//修改为post，get方法不安全
+User.post('/login', user.login)
+      .get('/getuser', function(req, res) {
+        res.render('user', {
+          status: "success",
+          title: "User"
+        })
+      })
 
-module.exports = router;
+module.exports = User;

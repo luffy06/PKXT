@@ -7,9 +7,9 @@ exports.autologin = function(req, res) {
   var login_user = req.session.user;
   if (login_user) {
     console.log(login_user.name + " has logined in this session!");
-    return res.render('index', {
+    return res.render('user', {
       status: "success",
-      title: "Index"
+      title: "User"
     })
   }
   console.log("no user is logined!")

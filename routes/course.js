@@ -1,8 +1,8 @@
 var express = require('express');
 var course = require('../middlewares/course');
-var router = express.Router();
+var Course = express.Router();
 
-router.get('/courseinfo', course.getinfo)
+Course.get('/courseinfo', course.getinfo)
 
 
-module.exports = router;
+module.exports = Course;

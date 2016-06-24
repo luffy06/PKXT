@@ -1,7 +1,7 @@
  $(function() {
      //登录判定
      $(".button-success").click(function(event) {
-         $.post("/user", { "user": $("#username").val(), "pass": $("#password").val() }, function(data, status, xhr) {
+         $.post("/user/login", { "name": $("#username").val(), "pass": $("#password").val() }, function(data, status, xhr) {
              if (status === "success") {
                  $.toast("登录成功!");
              } else {
