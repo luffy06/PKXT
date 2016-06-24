@@ -4,6 +4,7 @@
          $.post("/user/login", { "name": $("#username").val(), "pass": $("#password").val() }, function(data, status, xhr) {
              if (status === "success") {
                  $.toast("登录成功!");
+                 $.router.load('/user/getuser');
              } else {
                  $.alert("登录失败!"); //返回失败信息
              }

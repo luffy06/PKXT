@@ -74,7 +74,7 @@ exports.login = function(req, res) {
         // add session
         console.log("go to user.ejs");
         req.session.user = login_user;
-        return res.redirect('/user/getuser');
+        return res.redirect('/user/getuser');//??这边这个不知道为何无效
       }
     });
 
