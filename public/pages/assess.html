@@ -36,34 +36,6 @@
                     </div>
                 </div>
                 <div class="content-block">
-                    <div class="card">
-                        <div class="card-header" id='questionNumber'>问题1</div>
-                        <div class="card-content">
-                            <div class="card-content-inner" id='questionContent'>问题详细内容</div>
-                        </div>
-                        <div class="card-footer" id="questionChoices">
-                            <div class="list-block">
-                                <ul>
-                                    <li>
-                                        <p><a href="javascript:;" class="button  button-primary">A选项内容</a>
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p><a href="javascript:;" class="button  button-primary">B选项内容</a>
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p><a href="javascript:;" class="button  button-primary">C选项内容</a>
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p><a href="javascript:;" class="button  button-primary">D选项内容</a>
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -82,7 +54,38 @@
     </div>
     <script type='text/javascript' src='/js/zepto.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/sm.min.js' charset='utf-8'></script>
-    <script type='text/javascript' src='/js/main.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/template.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/assess.js' charset='utf-8'></script>
+    <script id="problemTemplate" type="text/html">
+        <div class="card">
+            <div class="card-header" id='questionNumber'>问题1</div>
+            <div class="card-content">
+                <div class="card-content-inner" id='questionContent'>问题详细内容</div>
+            </div>
+            <div class="card-footer" id="questionChoices">
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <p><a href="javascript:;" class="button  button-primary aBtn">A选项内容</a>
+                            </p>
+                        </li>
+                        <li>
+                            <p><a href="javascript:;" class="button  button-primary bBtn">B选项内容</a>
+                            </p>
+                        </li>
+                        <li>
+                            <p><a href="javascript:;" class="button  button-primary cBtn">C选项内容</a>
+                            </p>
+                        </li>
+                        <li>
+                            <p><a href="javascript:;" class="button  button-primary dBtn">D选项内容</a>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </script>
 </body>
 
 </html>

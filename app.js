@@ -20,12 +20,14 @@ var app = express();
 
 mongoose.connect(dbUrl);
 
+// change To html 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('.html', require('ejs').renderFile);  
-app.set('view engine', 'html');  
+// app.set('views', path.join(__dirname, 'views'));
+// app.engine('.html', require('ejs').renderFile);  
+// app.set('view engine', 'html');  
+
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
