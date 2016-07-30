@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>标题</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="/css/sm.min.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <!-- 单个page ,第一个.page默认被展示-->
+        <div class="page page-current">
+            <!-- 标题栏 -->
+            <header class="bar bar-nav">
+                <a href='javascript:;' class="icon icon-me pull-left open-panel"></a>
+                <a href='javascript:;' class="icon icon-code pull-right"></a>
+                <h1 class="title">标题</h1>
+            </header>
+            <!-- 这里是页面内容区 -->
+            <div class="content">
+                <div class="content-block">
+                    <div class="searchbar row">
+                        <div class="search-input col-80">
+                            <label class="icon icon-search" for="search"></label>
+                            <input type="search" id='searchinput' placeholder='输入课程号...' />
+                        </div>
+                        <a href='javascript:;' id="searchbtn" class="button button-fill button-primary col-20">搜索</a>
+                    </div>
+                </div>
+                <div class="result">
+                    <!--
+                <div class="card">
+                    <div class="card-header">课程号-课程名</div>
+                    <div class="card-content">
+                        <div class="card-content-inner">
+                            <p>任课老师:</p>
+                            <p>上课地点:</p>
+                            <p>上课时间:</p>
+                        </div>
+                    </div>
+                    <div class="card-footer"><a href="/assess" class="button button-fill button-primary">开始评课</a></div>
+                </div>-->
+                </div>
+            </div>
+        </div>
+        <!-- 其他的单个page内联页（如果有） -->
+    </div>
+    <!-- popup, panel 等放在这里 -->
+    <div class="panel-overlay"></div>
+    <!-- Left Panel with Reveal effect -->
+    <div class="panel panel-left panel-reveal">
+        <div class="content-block">
+            <div class="content-block">
+                <p>用户名</p>
+                <p><a class="button-logout" href="javascript:;">退出</a></p>
+            </div>
+        </div>
+    </div>
+    <script type='text/javascript' src='/js/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/main.js' charset='utf-8'></script>
+</body>
+
+</html>
