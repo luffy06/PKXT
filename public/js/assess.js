@@ -1,70 +1,82 @@
-$(function(){
+$(function() {
+    //TODO:获取courseid
+    var params = getParams(),
+        courseid = params['courseid'];
 
-  //TODO:获取url上的参数，判定是老师或学生
-  //合并到一个统一的js上，用来统一判定
+    $.ajax({
+        url: '/course/assesscourse',
+        type: 'post',
+        data: {
+            "courseid": courseid
+        },
+        dataType: 'json',
+        success: function(json) {
+            if (json.status === 'success') {
+                $('.content-block').empty();
+                //TODO:根据问题列表渲染数据
+                var data = {
+                        problist: json.problist
+                    },
+                    probHtml = template('problemTemplate', data);
+                $('.content-block').append(probHtml);
+                $('.card').eq(0).show();
+                //自动计时
+                var time = 0,
+                    hour,
+                    min,
+                    sec,
+                    formatTime,
+                    timer;
+                timer = setInterval(function() {
+                    time += 1;
+                    hour = Math.floor(time / 3600),
+                        min = Math.floor((time - hour * 3600) / 60),
+                        sec = time - hour * 3600 - min * 60,
+                        formatTime = hour + 'h' + min + 'm' + sec + 's';
+                    $("span#time").text(formatTime);
+                }, 1000);
 
-
-
-  //获取courseid
-  $.ajax({
-    url:'/course/assesscourse',
-    type:'post',
-    data:{
-      "courseid":courseid
-    },
-    dataType:'json',
-    success: function(json){
-
-    }
-  });
-
-
-
-
-
-
-
-     var time = 0,
-         timer;
-     //自动计时
-     $(document).on("pageInit", function(e, pageId, $page) {
-         if (pageId === 'assess') {
-             timer = setInterval(function() {
-                 time += 1;
-                 $("span#time").text(time);
-             }, 1000);
-         }
-     });
-
-     //计分并切换到下一题
-     $("div.list-block ul li a").click(function(event) {
-         //计分
-         var score,
-             data;//储存当前得分和题目数，传到后台记录，以防突然退出
-            
-
-         //切换到下一题
-        changeToNext(data);
-     });
-
-     function changeToNext(data){
-         $.get('/number',data,function(data,status,xhr){
-            if(data.status==="success"){
-                $("#questionNumber").text();
-                $("#questionContent").text();
-                //每个选项
-                $("#questionChoices a").each(function(index){
-
-                });
-            }else{
-                changeToNext(data);//重新发送
+            } else {
+                $.toast(json.status);
             }
-         });
-     }
+        }
+    });
 
 
+    //计分并切换到下一题
+    $(".content-block ul li a").on('tap', function(event) {
+        var $target = $(event.target),
+            courseid,
+            problemid = $target.parent('.card').find('.problemid').text();
+        choiceid = $target[0].id;
+        $.ajax({
+            url: '/course/savedata',
+            type: 'post',
+            data: {
+                "courseid": courseid,
+                "problemid": problemid,
+                "choiceid": choiceid
+            },
+            dataType: 'json',
+            success: function(json) {
+                if (json.status === 'success') {
+                    //TODO:计分？？
 
-     //添加在所有pageInit事件后
-     $.init();
+                    //切换到下一题
+                    $target.parent('.card').hide();
+                    $target.parent('.card').next('.card').show();
+
+                } else {
+                    $.toast(json.status);
+                }
+            }
+
+        });
+
+    });
+
+
+    //添加在所有pageInit事件后
+    $.init();
 
 });

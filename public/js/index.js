@@ -1,8 +1,6 @@
 $(function() {
     //TODO:调用本地数据，直接请求登录
-    // var user = window.localStorage.getItem('user');
-    // if( user){
-    //     user = JSON.parse(user);
+    //      var user = getStorage('user');
     //     $.ajax({
     //         url: '/user/login',
     //         type:'post',
@@ -16,7 +14,7 @@ $(function() {
     //                 $.toast('登录成功');
     //                 $.router.load('scan.html?role='+user.role+'&'+'name='+user.name);
     //             }else{
-    //                 // window.localStorage.removeItem('user')
+    //                 removeStorage('user');
     //             }
     //         }
     //     });
@@ -38,19 +36,18 @@ $(function() {
             dataType: 'json',
             success: function(json) {
                 if (json.status === "success") {
+                    //TODO:返回角色，是老师还是学生
                     //var role = josn.role;
                     $.toast("登录成功!");
 
                     //TODO:存放到本地
-                    // if (window.localStorage) {
                     //     var user = {
                     //         "name": $("#username").val(),
                     //         "pass": $("#password").val(),
                     //         "role":
                     //     };
-                    //     user = JSON.stringify(user);
-                    //     window.localStorage.setItem('user',user);
-                    // }
+                    //    setStorage('user',user);
+                   
 
 
 

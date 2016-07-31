@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
+    <title>评价</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,43 +48,49 @@
         <div class="content-block">
             <div class="content-block">
                 <p>用户名</p>
-                <p><a class="button-logout" href="javascript:;">退出</a></p>
+                <p><a class="scandBtn" href="javascript:;">搜索课程</a></p>
+                <p><a class="unfinishedBtn" href="javascript:;">未完成评课</a></p>
+                <p><a class="courselistBtn" style="display: none" href="javascript:;">课程信息</a></p>
+                <p><a class="logoutBtn" href="javascript:;">退出</a></p>
             </div>
         </div>
     </div>
     <script type='text/javascript' src='/js/zepto.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/sm.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/template.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/common.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/assess.js' charset='utf-8'></script>
     <script id="problemTemplate" type="text/html">
-        <div class="card">
-            <div class="card-header" id='questionNumber'>问题1</div>
+        {{each problist}}
+        <div class="card" style="display: none">
+            <div class="card-header">问题{{$index}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
             <div class="card-content">
-                <div class="card-content-inner" id='questionContent'>问题详细内容</div>
+                <div class="card-content-inner" id='questionContent'>{{$value.description}}</div>
             </div>
             <div class="card-footer" id="questionChoices">
                 <div class="list-block">
                     <ul>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary aBtn">A选项内容</a>
+                            <p><a href="javascript:;" class="button  button-primary aBtn" id="{{$value.choice[0].choiceid}}">{{$value.choice[0].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary bBtn">B选项内容</a>
+                            <p><a href="javascript:;" class="button  button-primary bBtn" id="{{$value.choice[1].choiceid}}">{{$value.choice[1].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary cBtn">C选项内容</a>
+                            <p><a href="javascript:;" class="button  button-primary cBtn" id="{{$value.choice[2].choiceid}}">{{$value.choice[2].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary dBtn">D选项内容</a>
+                            <p><a href="javascript:;" class="button  button-primary dBtn" id="{{$value.choice[3].choiceid}}">{{$value.choice[3].choicedesc}}</a>
                             </p>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+        {{each}}
     </script>
 </body>
 
