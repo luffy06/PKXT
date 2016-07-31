@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "supervisor ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "2.3.0",
@@ -15,7 +15,7 @@
     "express": "~4.13.1",
     "express-session": "^1.12.1",
     "ejs":"~2.4.2",
-    "kerberos": "0.0.17",
+    "kerberos": "~0.0.17",
     "mongoose": "^4.2.5",
     "morgan": "~1.6.1",
     "multer": "~0.1.8",    

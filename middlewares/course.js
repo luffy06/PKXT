@@ -26,7 +26,7 @@ exports.getinfo = function(req, res) {
     }
 
     var userid = -1;
-    var userdata = course['userdata'];
+    var userdata = course.userdata;
     for (var i = 0; i < userdata.size(); i++) {
       if (userdata[i].classid == req_classid) {
         userid = userdata[i].userid;
@@ -54,9 +54,9 @@ exports.getinfo = function(req, res) {
   
       res.render('courseinfo', {
         status: "success",
-        title: CoureseInfo,
+        title: "CoureseInfo",
         coursername: course['coursername'],
-        teacher: user['name']
+        teachername: user['name']
       })
     });
 

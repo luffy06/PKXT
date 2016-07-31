@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,6 +56,7 @@ app.use(index);
 app.use('/user/logout', function(req, res) {
   delete req.session.user;
   delete app.locals.user;
+  console.log("logout! Redirect to index!")
   return res.redirect('/');
 });
 

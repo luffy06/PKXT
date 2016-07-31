@@ -8,9 +8,8 @@ exports.autologin = function(req, res) {
   if (login_user) {
     console.log(login_user.name + " has logined in this session!");
     return res.render('user', {
-      status: "success",
       title: "User"
-    })
+    });
   }
   console.log("no user is logined!")
   // var new_mac_address = req.body.mac_address;
@@ -30,8 +29,8 @@ exports.autologin = function(req, res) {
   //     })
   //   }
   // })
-  res.render('index', {
-    status: "success",
+  console.log("go to index");
+  return res.render('index', {
     title: "Index"
   })
 };
