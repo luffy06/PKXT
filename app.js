@@ -20,9 +20,11 @@ var app = express();
 
 mongoose.connect(dbUrl);
 
+// change To html 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.engine('.html', require('ejs').renderFile);  
+// app.set('view engine', 'html');  
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -53,12 +55,19 @@ app.use(function(req, res, next) {
 
 app.use(index);
 
+// 可以不需要logout，直接发送一个get请求，然后前端重定向
+// ? 不用logout的话，不需要删除session中的user么?
+/*
 app.use('/user/logout', function(req, res) {
   delete req.session.user;
   delete app.locals.user;
   console.log("logout! Redirect to index!")
   return res.redirect('/');
 });
+
+  return res.redirect('/');//这句同样无效
+});
+*/
 
 app.use('/user', user);
 app.use('/course', course);

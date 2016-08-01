@@ -6,7 +6,9 @@ var User = mongoose.model('user', UserSchema);
 
 exports.getinfo = function(req, res) {
   var req_courseid = req.body.courseid;
-  var req_classid = req.body.classid;
+  if (req_courseid == null)
+    req_courseid = req.query.courseid;
+
   Course.findOne({courseid: req_courseid}, function(err, course) {
     if (err) {
       console.log("Error Message in middlewares/course.js: " + err);

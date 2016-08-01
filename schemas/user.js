@@ -17,11 +17,6 @@ var userSchema = new mongoose.Schema({
     type: String,
     default: 'student'
   },
-  // the MAC address of the user's device
-  mac_address: {
-    type: String,
-    default: 'unknown'
-  },
   meta: {
     createAt: {
       type: Date,
@@ -65,6 +60,21 @@ userSchema.pre('save', function(next) {
 
 // custom method
 userSchema.methods = {
+  // get hashed result of userid 
+  getHashedUserId: function(cb) {
+    var user = this;
+
+    bcrypt.getSalt(SALT_WORK_FACTOR, function(err, salt) {
+      if (err)
+        return cb(err);
+      bcrypt.hash(user.id, salt, function(err, hash) {
+        if (err)
+          return cb(err);
+        user.id = hash;
+        cb(null);
+      });
+    });
+  },
   // compare password
   comparePassword: function(pass, cb) {
     bcrypt.compare(pass, this.pass, function(err, isMatch) {
@@ -74,7 +84,7 @@ userSchema.methods = {
     });
   },
   // update password
-  updatepsw: function(pass, cb) {
+  updatePassword: function(pass, cb) {
     var user = this;
 
     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
@@ -86,7 +96,7 @@ userSchema.methods = {
         user.pass = hash;
         cb(null);
       });
-    })
+    });
   }
 }
 

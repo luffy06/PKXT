@@ -3,17 +3,17 @@ var mongoose = require('mongoose');
 var courseSchema = new mongoose.Schema({
   courseid: Number,
   coursename: String,
-  problem: [{
-    problemid: Number,
-    description: String,
-    choice: [{
-      choiceid: Number,
-      choicedesc: String
-    }]
-  }],
   userdata: [{
     classid: Number,
-    userid: Number
+    userid: Number,
+    problem: [{
+      problemid: Number,
+      description: String,
+      choice: [{
+        choiceid: Number,
+        choicedesc: String
+      }]
+    }]
   }],
   meta: {
     createAt: {
