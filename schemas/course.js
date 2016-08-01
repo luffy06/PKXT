@@ -37,4 +37,22 @@ courseSchema.pre('save', function(next) {
   }
 });
 
+// custom method
+// courseSchema.methods = {
+// }
+
+// statics method
+courseSchema.statics = {
+  fetchByUserId: function(id, cb) {
+    return this
+      .find({userdata.userid: id})
+      .exec(cb)
+  },
+  findByCourseId: function(id, cb) {
+    return this
+      .find({courseid: id})
+      .exec(cb)
+  }
+}
+
 module.exports = courseSchema;

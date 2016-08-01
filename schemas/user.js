@@ -60,21 +60,6 @@ userSchema.pre('save', function(next) {
 
 // custom method
 userSchema.methods = {
-  // get hashed result of userid 
-  getHashedUserId: function(cb) {
-    var user = this;
-
-    bcrypt.getSalt(SALT_WORK_FACTOR, function(err, salt) {
-      if (err)
-        return cb(err);
-      bcrypt.hash(user.id, salt, function(err, hash) {
-        if (err)
-          return cb(err);
-        user.id = hash;
-        cb(null);
-      });
-    });
-  },
   // compare password
   comparePassword: function(pass, cb) {
     bcrypt.compare(pass, this.pass, function(err, isMatch) {
@@ -115,11 +100,16 @@ userSchema.statics = {
       .findOne({name: name})
       .exec(cb)
   },
-  // use user's MAC address to find user
-  findByMAC: function(mac_address, cb) {
-    return this
-      .findOne({mac_address: mac_address})
-      .exec(cb)
+  getHashedId: function(id, cb) {
+    bcrypt.getSalt(SALT_WORK_FACTOR, function(err, salt) {
+      if (err)
+        return cb(err);
+      bcrypt.hash(id, salt, function(err, hash) {
+        if (err)
+          return cb(err);
+        return cb(hash);
+      });
+    });
   }
 }
 

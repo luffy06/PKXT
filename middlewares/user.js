@@ -8,13 +8,15 @@ exports.login = function(req, res) {
   login_user.pass = req.body.pass;
 
   console.log(login_user.id + " is logining!");
-  login_user.getHashedUserId(function(err) {
+  User.getHashedId(login_user.id, function(err, id) {
     if (err) {
       return res.send({
         status: "error",
         errormessage: err
       })
     }
+    login_user.id = id;
+    console.log("hashed result: " + id);
     User.findOne({id: login_user.id}, function(err, db_user) {
       if (err) {
         return res.send({
@@ -54,7 +56,8 @@ exports.login = function(req, res) {
           req.session.user = db_user;
           return res.send({
             status: "success",
-            title: "User"
+            title: "User",
+            role: db_user.role
           });
         }
       });
