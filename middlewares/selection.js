@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var SelectionSchema = require('../schemas/seletion');
+var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
 
 exports.getunfinished = function(req, res) {
@@ -53,14 +53,36 @@ exports.savadata = function(req, res) {
       var classid = req.query.classid;
       // var finished = 
       
+      var index = -1;
       for (var i = 0; i < data.size(); i++) {
         if (data[i].courseid == courseid 
           && data[i].classid == classid) {
-
-          var problem = data[i].problem;
-          for (var j = 0; j < )
+          index = i;
         }
       }
+      if (index == -1) {
+        index = data.size();
+        selection.selectiondata[index] = {};
+        selection.selectiondata[index].courseid = courseid;
+        selection.selectiondata[index].classid = classid;
+      }
+
+      var problem = selection.selectiondata.problem;
+      var problemid = req.body.problemid;
+      var choiceid = req.body.choiceid;
+      var ind = -1;
+
+      for (var i = 0; i < problem.size(); i++) {
+        if (problem[i].problemid == problemid) {
+          ind = i;
+        }
+      }
+
+      if (ind == -1) {
+        ind = problem.size();
+      }
+      selection.selectiondata[index].problem[ind].problemid = problemid;
+      selection.selectiondata[index].problem[ind].choiceid = choiceid;
 
       selection.save(function(err, _selection) {
         if (err) {
