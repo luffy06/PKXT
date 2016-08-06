@@ -45,7 +45,7 @@ courseSchema.pre('save', function(next) {
 courseSchema.statics = {
   fetchByUserId: function(id, cb) {
     return this
-      .find({userdata.userid: id})
+      .find({"userdata.userid": id})
       .exec(cb)
   },
   findByCourseId: function(id, cb) {
