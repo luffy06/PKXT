@@ -7,7 +7,15 @@ exports.login = function(req, res) {
   login_user.loginid = req.body.name;
   login_user.pass = req.body.pass;
 
-  console.log(login_user.loginid + " is logining password is " + login_user.pass);
+  // for test
+  // req.session.user = login_user;
+  // return res.send({
+  //   status: "success",
+  //   title: "User",
+  //   role: "student"
+  // })
+
+  
   User.findOneById({loginid: login_user.loginid}, function(err, db_user) {
     if (err) {
       return res.send({
@@ -15,14 +23,6 @@ exports.login = function(req, res) {
         errormessage: err
       });
     }
-
-    // for test
-    // req.session.user = login_user;
-    // return res.send({
-    //   status: "success",
-    //   title: "User",
-    //   role: "student"
-    // })
 
     if (!db_user) {
       // user is not exist

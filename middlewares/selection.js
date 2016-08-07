@@ -3,8 +3,17 @@ var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
 
 exports.getunfinished = function(req, res) {
-  console.log("in getunfinished");
   var user = req.session.user;
+
+  // for test
+  // var courselist = new Array();
+
+  // return res.send({
+  //   status: "success",
+  //   title: "UnfinishedCourseList",
+  //   courselist: courselist
+  // })
+
   Selection.fetchUnfinishedByUserId(user.loginid, function(err, selection) {
     var courselist = new Array();
     if (!selection) {
@@ -42,8 +51,13 @@ exports.getunfinished = function(req, res) {
 }
 
 exports.savadata = function(req, res) {
-  console.log("in savadata");
   var user = req.session.user;
+  
+  // for test
+  // return res.send({
+  //   status: "success"
+  // })
+
   Selection.findByUserId(user.loginid, function(err, db_selection) {
     if (err) {
       return res.send({

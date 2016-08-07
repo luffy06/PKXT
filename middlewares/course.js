@@ -5,9 +5,28 @@ var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 
 exports.getinfo = function(req, res) {
+  console.log("in getinfo")
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
+
+  // for test
+  // var res_courselist = new Array();
+
+  // for (var i = 0; i < 3; i++) {
+  //   var item_course = {};
+  //   item_course.coursename = "course.coursename";
+  //   item_course.courseid = "course.courseid";
+  //   item_course.classid = "userdata[i].classid";
+  //   item_course.teachername = "teachername"
+  //   res_courselist[i] = item_course;
+  // }
+
+  // return res.send({
+  //   status: "success",
+  //   title: "CoureseInfo",
+  //   courselist: res_courselist
+  // })
 
   Course.findOne({courseid: req_courseid}, function(err, course) {
     if (err) {
@@ -51,6 +70,7 @@ exports.getinfo = function(req, res) {
         }
         item_course.teachername = user.name;
       });
+      res_courselist[i] = item_course;
     }
     return res.send({
       status: "success",
@@ -67,6 +87,14 @@ exports.getproblemlist = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
+
+  // for test
+  // var problemlist = new Array();
+  // return res.send({
+  //   stauts: "success",
+  //   title: "ProblemList",
+  //   problist: problemlist
+  // });
 
   // code repeat too much
   // too bad
@@ -117,6 +145,16 @@ exports.getproblemlist = function(req, res) {
 
 exports.getcourselist = function(req, res) {
   var userid = req.session.user.loginid;
+
+  // for test
+  // var res_courselist = new Array();
+
+  // return res.send({
+  //   status: "success",
+  //   title: "CourseList",
+  //   courselist: res_courselist
+  // })
+
   Course.fetchByUserId(userid, function(err, courselist) {
     if (err) {
       return res.send({
@@ -149,6 +187,15 @@ exports.editproblem = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
+  var action = req.query.type;
+  
+  // for test
+
+  // return res.send({
+  //   stauts: "success",
+  //   type: action
+  // })
+
   Course.findOne({courseid: req_courseid}, function(err, course) {
     if (err) {
       return res.send({
@@ -183,7 +230,6 @@ exports.editproblem = function(req, res) {
       })
     }
 
-    var action = req.query.type;
     // 1 add 2 update 3 delete
     if (action == 1) {
       var problem = req.body.prob;
