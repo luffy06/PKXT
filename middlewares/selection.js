@@ -3,11 +3,19 @@ var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
 
 exports.getunfinished = function(req, res) {
+  console.log("in getunfinished");
   var user = req.session.user;
-  Selection.fetchUnfinishedByUserId(user.id, function(err, selection) {
-    var data = selection.selectiondata
+  Selection.fetchUnfinishedByUserId(user.loginid, function(err, selection) {
     var courselist = new Array();
-    for (var i = 0, j = 0; i < data.size(); i++) {
+    if (!selection) {
+      return res.send({
+        status: "success",
+        title: "UnfinishedCourseList",
+        courselist: courselist
+      });
+    }
+    var data = selection.selectiondata;
+    for (var i = 0, j = 0; i < data.size; i++) {
       if (data[i].finished == false) {
         var course = {};
         course.courseid = data[i].courseid;
@@ -27,15 +35,16 @@ exports.getunfinished = function(req, res) {
     }
     return res.send({
       status: "success",
-      title: "UnfinishedCourseList"
+      title: "UnfinishedCourseList",
       courselist: courselist
     })
   })
 }
 
 exports.savadata = function(req, res) {
+  console.log("in savadata");
   var user = req.session.user;
-  Selection.findByUserId(user.id, function(err, db_selection) {
+  Selection.findByUserId(user.loginid, function(err, db_selection) {
     if (err) {
       return res.send({
         status: "error",
@@ -45,7 +54,7 @@ exports.savadata = function(req, res) {
       var selection = db_selection;
       if (!db_selection) {
         selection = new Selection();
-        selection.userid = user.id;
+        selection.userid = user.loginid;
       }
 
       var data = selection.selectiondata;
@@ -54,14 +63,14 @@ exports.savadata = function(req, res) {
       // var finished = 
       
       var index = -1;
-      for (var i = 0; i < data.size(); i++) {
+      for (var i = 0; i < data.size; i++) {
         if (data[i].courseid == courseid 
           && data[i].classid == classid) {
           index = i;
         }
       }
       if (index == -1) {
-        index = data.size();
+        index = data.size;
         selection.selectiondata[index] = {};
         selection.selectiondata[index].courseid = courseid;
         selection.selectiondata[index].classid = classid;
@@ -72,14 +81,14 @@ exports.savadata = function(req, res) {
       var choiceid = req.body.choiceid;
       var ind = -1;
 
-      for (var i = 0; i < problem.size(); i++) {
+      for (var i = 0; i < problem.size; i++) {
         if (problem[i].problemid == problemid) {
           ind = i;
         }
       }
 
       if (ind == -1) {
-        ind = problem.size();
+        ind = problem.size;
       }
       selection.selectiondata[index].problem[ind].problemid = problemid;
       selection.selectiondata[index].problem[ind].choiceid = choiceid;

@@ -4,8 +4,8 @@ var SALT_WORK_FACTOR = 10;
 
 var userSchema = new mongoose.Schema({
   // user ID
-  id: {
-    type: Number,
+  loginid: {
+    type: String,
     unique: true
   },
   // user name
@@ -58,6 +58,21 @@ userSchema.pre('save', function(next) {
   })
 });
 
+userSchema.pre('findOneById', function(next) {
+  var id = this;
+
+  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    if (err)
+      return next(err);
+    bcrypt.hash(id, salt, function(err, hash) {
+      if (err)
+        return next(err)
+      id = hash;
+      next();
+    })
+  })
+})
+
 // custom method
 userSchema.methods = {
   // compare password
@@ -91,7 +106,12 @@ userSchema.statics = {
   fetch: function(cmp, cb) {
     return this
       .find({})
-      .sort({'role': cmp})
+      .sort({"role": cmp})
+      .exec(cb)
+  },
+  findOneById: function(id, cb) {
+    return this
+      .findOne({"id": id})
       .exec(cb)
   },
   // use user's name to find user
@@ -99,17 +119,6 @@ userSchema.statics = {
     return this
       .findOne({name: name})
       .exec(cb)
-  },
-  getHashedId: function(id, cb) {
-    bcrypt.getSalt(SALT_WORK_FACTOR, function(err, salt) {
-      if (err)
-        return cb(err);
-      bcrypt.hash(id, salt, function(err, hash) {
-        if (err)
-          return cb(err);
-        return cb(hash);
-      });
-    });
   }
 }
 

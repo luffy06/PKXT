@@ -8,9 +8,6 @@ exports.getinfo = function(req, res) {
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
-  var req_classid = req.body.classid;
-  if (req_classid == null)
-    req_classid = req.query.classid;
 
   Course.findOne({courseid: req_courseid}, function(err, course) {
     if (err) {
@@ -29,46 +26,37 @@ exports.getinfo = function(req, res) {
       });
     }
     // get course
-    var res_course = {};
-    res_course.courseid = course.courseid;
-    res_course.coursername = course.coursername;
-
-    // get teachername
-    var teachername;
-    var userid = -1;
-    var userdata = course.userdata;
-    for (var i = 0; i < userdata.size(); i++) {
-      if (userdata[i].classid == req_classid) {
-        userid = userdata[i].userid;
-        break;
-      }
-    }
-    // classid is wrong
-    if (userid == -1) {
-      console.log("middlewares/course.js: " + req_classid + " is not exist!");
-      return res.send({
-        status: "error",
-        errormessage: req_classid + " is not exist!"
-      })
-    }
-
-    User.getHashedId(userid, function(err, id) {
-      User.findOne({id: id}, function(err, user) {
+    var res_courselist = new Array();
+    
+    for (var i = 0; i < userdata.size; i++) {
+      var item_course = {};
+      item_course.coursename = course.coursename;
+      item_course.courseid = course.courseid;
+      item_course.classid = userdata[i].classid;
+      var loginid = userdata[i].userid;
+      User.findOneById({loginid: loginid}, function(err, user) {
         if (err) {
           return res.send({
             status: "error",
             errormessage: err
           });
         }
-    
-        return res.send({
-          status: "success",
-          title: "CoureseInfo",
-          course: res_course,
-          teachername: user.name
-        })
+        if (!user) {
+          return res.send({
+            stauts: "error",
+            errormessage: "the teacher id: " + loginid + " of course " 
+                        + course.coursename + " in class " 
+                        + userdata[i].classid + " is not exist!"
+          })
+        }
+        item_course.teachername = user.name;
       });
-    });
+    }
+    return res.send({
+      status: "success",
+      title: "CoureseInfo",
+      courselist: res_courselist
+    })
   });
 };
 
@@ -101,7 +89,7 @@ exports.getproblemlist = function(req, res) {
 
     var index = -1;
     var userdata = course.userdata;
-    for (var i = 0; i < userdata.size(); i++) {
+    for (var i = 0; i < userdata.size; i++) {
       if (userdata[i].classid == req_classid) {
         index = i;
         break;
@@ -128,7 +116,7 @@ exports.getproblemlist = function(req, res) {
 }
 
 exports.getcourselist = function(req, res) {
-  var userid = req.session.user.id;
+  var userid = req.session.user.loginid;
   Course.fetchByUserId(userid, function(err, courselist) {
     if (err) {
       return res.send({
@@ -139,7 +127,7 @@ exports.getcourselist = function(req, res) {
 
     // get course list
     var res_courselist = new Array();
-    for (var i = 0; i < courselist.size(); i++) {
+    for (var i = 0; i < courselist.size; i++) {
       var course = courselist[i];
       res_courselist[i] = {};
       res_courselist[i].courseid = course.courseid;
@@ -180,7 +168,7 @@ exports.editproblem = function(req, res) {
 
     var index = -1;
     var userdata = course.userdata;
-    for (var i = 0; i < userdata.size(); i++) {
+    for (var i = 0; i < userdata.size; i++) {
       if (userdata[i].classid == req_classid) {
         index = i;
         break;
@@ -195,21 +183,22 @@ exports.editproblem = function(req, res) {
       })
     }
 
-    var action = req.query.action;
-    if (action == "add") {
+    var action = req.query.type;
+    // 1 add 2 update 3 delete
+    if (action == 1) {
       var problem = req.body.prob;
-      var size = userdata[index].problem.size();
+      var size = userdata[index].problem.size;
       problem.problemid = size;
       var choice = problem.choice;
-      for (var i = 0; i < choice.size(); i++)
+      for (var i = 0; i < choice.size; i++)
         problem.choice[i].choiceid = i + 1;
       course.userdata[index].problem.splice(size - 1, 0, problem);
     }
-    else if (action == "update") {
+    else if (action == 2) {
       var problem = req.body.prob;
       var problemid = req.query.problemid;
       var ind = -1;
-      for (var i = 0; i < userdata[index].problem.size(); i++) {
+      for (var i = 0; i < userdata[index].problem.size; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
           ind = i;
           break;
@@ -222,11 +211,14 @@ exports.editproblem = function(req, res) {
         })
       }
       course.userdata[index].problem.splice(ind, 1, probelm);
+      return res.send({
+        stauts: "success"
+      })
     }
-    else if (action == "delete") {
+    else if (action == 3) {
       var problemid = req.query.problemid;
       var ind = -1;
-      for (var i = 0; i < userdata[index].problem.size(); i++) {
+      for (var i = 0; i < userdata[index].problem.size; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
           ind = i;
           break;
@@ -239,6 +231,9 @@ exports.editproblem = function(req, res) {
         })
       }
       course.userdata[index].problemid.splice(ind, 1);
+      return res.send({
+        stauts: "success"
+      })
     }
     else {
       console.log("cannot distinguish action: " + action);

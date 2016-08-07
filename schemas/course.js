@@ -1,16 +1,16 @@
 var mongoose = require('mongoose');
 
 var courseSchema = new mongoose.Schema({
-  courseid: Number,
+  courseid: String,
   coursename: String,
   userdata: [{
-    classid: Number,
-    userid: Number,
+    classid: String,
+    userid: String,
     problem: [{
-      problemid: Number,
+      problemid: String,
       description: String,
       choice: [{
-        choiceid: Number,
+        choiceid: String,
         choicedesc: String
       }]
     }]

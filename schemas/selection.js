@@ -1,14 +1,14 @@
 var mongoose = require('mongoose');
 
 var selectionSchema = new mongoose.Schema({
-  userid: Number,
+  userid: String,
   selectiondata: [{
-    courseid: Number,
-    classid: Number,
+    courseid: String,
+    classid: String,
     finished: Boolean,
     problem: [{
-      problemid: Number,
-      choiceid: Number
+      problemid: String,
+      choiceid: String
     }]
   }],
   meta: {
@@ -37,15 +37,15 @@ selectionSchema.pre('save', function(next) {
 selectionSchema.statics = {
   fetchUnfinishedByUserId: function(id, cb) {
     return this
-      .find({userid: id, selectiondata.finished: false})
+      .find({"userid": id, "selectiondata.finished": false})
       .exec(cb)
   },
   findByUserId: function(id, cb) {
     return this
-      .find(userid: id)
+      .find({"userid": id})
       .exec(cb)
   }
 }
 
 
-module.exports = selectSchema;
+module.exports = selectionSchema;
