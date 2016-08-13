@@ -1,8 +1,4 @@
 $(function() {
-    //TODO:获取url上的参数，判定是老师或学生
-    //合并到一个统一的js上，用来统一判定
-
-
 
 
     //查询课程
@@ -10,7 +6,7 @@ $(function() {
         $("div.result").empty("div.content-block"); //清除上次
         $.showPreloader(); //加载提示
         $.ajax({
-            url: '/course/scan',
+            url: '/course/courseinfo',
             type: 'post',
             data: {
                 "courseid": $("#searchinput").val()
@@ -22,17 +18,14 @@ $(function() {
                     var resultHtml,
                         data = {
                             title: json.title,
-                            course: json.course,
-                            teachername: json.teachername
+                            courselist: json.courselist
                         };
 
                     resultHtml = template('searchResultTemplate', data);
                     $("div.result").append(resultHtml);
 
                 } else {
-                    $.alert("查无此课程!", function() {
-                        $("#searchinput").val("");
-                    });
+                    $.alert(json.errormessage);
                 }
                 $.hidePreloader();
             }
@@ -42,16 +35,16 @@ $(function() {
     //评课
     $('.content').on('tap', '.assessBtn', function(event) {
         var $target = $(event.target),
-            courseid = $target.parent('.card').find('.courseid').text();
+            courseid = $target.parent('.card').find('.courseid').text(),
+            classid = $target.parent('.card').find('.classid').text();
 
         //url上传递courseid
-        $.router.load('assess.html?courseid='+courseid);
-
+        window.location.href = 'assess.html?courseid=' + courseid + '&classid=' + classid;
     });
 
 
 
-    
+
 
 
 

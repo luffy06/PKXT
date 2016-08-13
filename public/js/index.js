@@ -42,9 +42,9 @@ $(function() {
 
                     //TODO:存放到本地
                     //     var user = {
-                    //         "name": $("#username").val(),
-                    //         "pass": $("#password").val(),
-                    //         "role":
+                    //         name: $("#username").val(),
+                    //         pass: $("#password").val(),
+                    //         role: role
                     //     };
                     //    setStorage('user',user);
                    
@@ -52,9 +52,11 @@ $(function() {
 
 
                     //TODO:判定是学生还是老师，在url上加上不同的参数
-                    $.router.load('scan.html?role=' + role);
+                    role = 'student';
+                    window.location.href = 'scan.html?role='+ role;
+                    
                 } else {
-                    $.alert("登录失败!"); //TODO:更改为相应的失败信息
+                    $.alert(json.errormessage); //TODO:更改为相应的失败信息
                 }
             }
         });

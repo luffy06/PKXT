@@ -1,6 +1,6 @@
 $(function() {
     $.ajax({
-        url: '/course/courselist',
+        url: '/course/courseinfo',
         type: 'post',
         data: {
 
@@ -22,15 +22,18 @@ $(function() {
     //修改问题
     $('.result .card .editBtn').on('tap', function(event) {
         var $target = $(event.target),
-            courseid = $target.parent('.card').find('.courseid').text();
-        $.router.load('editprob.html?courseid=' + courseid);
+            $parentCard = $target.parent('.card'),
+            classid = $parentCard.find('.classid').text(),
+            courseid = $parentCard.find('.courseid').text();
+
+        window.location.href = 'editprob.html?courseid=' + courseid + '&classid=' + classid;
     });
 
     //增加问题
     $('.result .card .addBtn').on('tap', function(event) {
         var $target = $(event.target),
             courseid = $target.parent('.card').find('.courseid').text();
-        $.router.load('addprob.html?courseid=' + courseid);
+        window.location.href = 'addprob.html?courseid=' + courseid + '&classid=' + classid;
     });
 
 

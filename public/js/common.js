@@ -1,4 +1,4 @@
-//设置本地存储
+//设置本地存储obj
 function setStorage(name, obj) {
     if (name && obj) {
         var obj = JSON.stringify(obj);
@@ -7,7 +7,7 @@ function setStorage(name, obj) {
 }
 
 
-//获取本地存储
+//获取本地存储obj
 function getStorage(name) {
     if (typeof name !== 'string') {
         return;
@@ -55,32 +55,80 @@ function returnStuOrTea() {
 }
 
 
+//自动计时
+function startTimer($time, timerName) {
+    //自动计时
+    var time = parseInt(window.localStorage.getItem(timerName),10) || 0,
+        hour,
+        min,
+        sec,
+        formatTime,
+        timer;
+    timer = setInterval(function() {
+        time += 1;
+        window.localStorage.setItem(timerName, time);
+        hour = Math.floor(time / 3600),
+            min = Math.floor((time - hour * 3600) / 60),
+            sec = time - hour * 3600 - min * 60,
+            formatTime = hour + 'h ' + min + 'm ' + sec + 's';
+        $time.text(formatTime);
+    }, 1000);
+
+    return timer;
+}
+
+//结束计时
+function stopTimer(timer, timerName) {
+    clearInterval(timer);
+    window.localStorage.removeItem(timerName);
+}
+
+
+//路由
+function routerTo(page, params){
+    var href = page + '?';
+
+    for(var i in params){
+        href += (i + '=' + params[i] + '&');
+    }
+    window.location.href = href.slice(0, href.length-1); 
+}
+
+
 $(function() {
+    //TODO:change CDN
 
     //TODO:存在侧边栏的页面需要进行学生还是老师的判定
-    // if($('.panel-left')){
+    // if($('.panel-left')[0]){
     //   if(returnStuOrTea()){
     //     $('.courselistBtn').show();
     //   }  
+    // }
+
+    //TODO:存在侧边栏的页面需要更改用户名
+    // var $username = $('#username');
+    // if($username[0]){
+    //     var username = window.localStorage.getItem('username');
+    //     $username.text(username);
     // }
 
 
 
     /*侧边栏跳转功能*/
     //搜索课程scan.html
-    $('.scandBtn').on('tap',function(){
-        $.router.load('/pages/scan.html');
+    $('.scandBtn').on('tap', function() {
+        window.location.href = 'scan.html';
     });
 
 
     //未完成unfinished.html
-    $('.unfinishedBtn').on('tap',function(){
-        $.router.load('/pages/unfinished.html');
+    $('.unfinishedBtn').on('tap', function() {
+        window.location.href = 'unfinished.html';
     });
 
     //课程信息列表
-      $('.courselistBtn').on('tap',function(){
-        $.router.load('/pages/courselist.html');
+    $('.courselistBtn').on('tap', function() {
+        window.location.href = 'courselist.html';
     });
 
 
@@ -94,7 +142,7 @@ $(function() {
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast(json.status);
-                    $.router.load('/pages/index.html');
+                    window.location.href = 'index.html';
                 } else {
                     $.toast(json.status);
                 }

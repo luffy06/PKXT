@@ -38,7 +38,7 @@
     <div class="panel panel-left panel-reveal">
         <div class="content-block">
             <div class="content-block">
-                <p>用户名</p>
+                <p id="username">用户名</p>
                 <p><a class="scandBtn" href="javascript:;">搜索课程</a></p>
                 <p><a class="unfinishedBtn" href="javascript:;">未完成评课</a></p>
                 <p><a class="courselistBtn" style="display: none" href="javascript:;">课程信息</a></p>
@@ -52,20 +52,19 @@
     <script type='text/javascript' src='/js/common.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/courselist.js' charset='utf-8'></script>
     <script id="courselistTemplate" type="text/html">
+        {{each courselist}}
         <div class='card'>
-            <div class='card-header'><span class="courseid">课程号</span><span>课程名</span></div>
+            <div class='card-header'><span class="courseid">课程号:{{$value.courseid}}</span><span class='classid'>课堂号:{{$value.classid}}</span><span>课程名:{{$value.coursename}}</span></div>
             <div class='card-content'>
                 <div class='card-content-inner'>
-                    <p>任课老师:{{teachername}}</p>
+                    <p>任课老师:{{$value.teachername}}</p>
                     <p>上课地点:</p>
                     <p>上课时间:</p>
                 </div>
-                <div class='card-footer'>
-                <a href='javascript:;' class='button button-fill button-primary editBtn'>修改问题</a>
-                <a href='javascript:;' class='button button-fill button-primary addBtn'>增加问题</a>
-                </div>
+                <div class='card-footer'><a href='javascript:;' class='button button-fill button-primary assessBtn'>开始评课</a></div>
             </div>
         </div>
+        {{/each}}
     </script>
 </body>
 
