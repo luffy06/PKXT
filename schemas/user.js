@@ -49,25 +49,25 @@ userSchema.pre('save', function(next) {
         return next(err);
       user.pass = hash;
     })
-    bcrypt.hash(user.id, salt, function(err, hash) {
+    bcrypt.hash(user.loginid, salt, function(err, hash) {
       if (err)
         return next(err)
-      user.id = hash;
+      user.loginid = hash;
       next();
     })
   })
 });
 
 userSchema.pre('findOneById', function(next) {
-  var id = this;
+  var loginid = this;
 
   bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
     if (err)
       return next(err);
-    bcrypt.hash(id, salt, function(err, hash) {
+    bcrypt.hash(loginid, salt, function(err, hash) {
       if (err)
         return next(err)
-      id = hash;
+      loginid = hash;
       next();
     })
   })
@@ -109,15 +109,15 @@ userSchema.statics = {
       .sort({"role": cmp})
       .exec(cb)
   },
-  findOneById: function(id, cb) {
+  findOneById: function(loginid, cb) {
     return this
-      .findOne({"id": id})
+      .findOne({"loginid": loginid})
       .exec(cb)
   },
   // use user's name to find user
   findByName: function(name, cb) {
     return this
-      .findOne({name: name})
+      .findOne({"name": name})
       .exec(cb)
   }
 }

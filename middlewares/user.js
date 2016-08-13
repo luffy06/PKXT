@@ -14,7 +14,53 @@ exports.login = function(req, res) {
   //   title: "User",
   //   role: "student"
   // })
+  var user = new User();
+  user.loginid = "user";
+  user.name = "student";
+  user.pass = "123";
+  user.role = "student";
+  console.log("create user root")
+  User.findOneById(user.loginid, function(err, db_user) {
+    if (err) {
+        return res.send({
+          status: "error",
+          errormessage: err
+        });
+      }
 
+    if (!db_user) {
+      user.save(function(err, res_user) {
+        if (err) {
+          return res.send({
+            status: "error",
+            errormessage: err
+          });
+        }
+      });
+    }
+  });
+  user.loginid = "root";
+  user.name = "admin";
+  user.role = "teacher";
+  User.findOneById(user.loginid, function(err, db_user) {
+    if (err) {
+      return res.send({
+        status: "error",
+        errormessage: err
+      });
+    }
+
+    if (!db_user) {
+      user.save(function(err, res_user) {
+        if (err) {
+          return res.send({
+            status: "error",
+            errormessage: err
+          });
+        }
+      });
+    }
+  });
   
   User.findOneById({loginid: login_user.loginid}, function(err, db_user) {
     if (err) {
