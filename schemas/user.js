@@ -48,30 +48,32 @@ userSchema.pre('save', function(next) {
       if (err)
         return next(err);
       user.pass = hash;
-    })
-    bcrypt.hash(user.loginid, salt, function(err, hash) {
-      if (err)
-        return next(err)
-      user.loginid = hash;
       next();
     })
+    // bcrypt.hash(user.loginid, salt, function(err, hash) {
+    //   if (err)
+    //     return next(err)
+    //   user.loginid = hash;
+    //   next();
+    // })
   })
 });
 
-userSchema.pre('findOneById', function(next) {
-  var loginid = this;
-
-  bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-    if (err)
-      return next(err);
-    bcrypt.hash(loginid, salt, function(err, hash) {
-      if (err)
-        return next(err)
-      loginid = hash;
-      next();
-    })
-  })
-})
+// userSchema.pre('findOne', function(next) {
+//   var loginid = this._conditions.loginid;
+//   if (loginid != null) {
+//     bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+//       if (err)
+//         return next(err);
+//       bcrypt.hash(loginid, salt, function(err, hash) {
+//         if (err)
+//           return next(err)
+//         loginid = hash;
+//         next();
+//       })
+//     })
+//   }
+// })
 
 // custom method
 userSchema.methods = {

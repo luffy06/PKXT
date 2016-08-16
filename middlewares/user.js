@@ -19,30 +19,7 @@ exports.login = function(req, res) {
   user.name = "student";
   user.pass = "123";
   user.role = "student";
-  console.log("create user root")
-  User.findOneById(user.loginid, function(err, db_user) {
-    if (err) {
-        return res.send({
-          status: "error",
-          errormessage: err
-        });
-      }
-
-    if (!db_user) {
-      user.save(function(err, res_user) {
-        if (err) {
-          return res.send({
-            status: "error",
-            errormessage: err
-          });
-        }
-      });
-    }
-  });
-  user.loginid = "root";
-  user.name = "admin";
-  user.role = "teacher";
-  User.findOneById(user.loginid, function(err, db_user) {
+  User.findOneById(user.loginid, function(err, db_user1) {
     if (err) {
       return res.send({
         status: "error",
@@ -50,19 +27,48 @@ exports.login = function(req, res) {
       });
     }
 
-    if (!db_user) {
-      user.save(function(err, res_user) {
+    if (db_user1 == null) {
+      user.save(function(err, res_user1) {
         if (err) {
+          console.log(err);
           return res.send({
             status: "error",
             errormessage: err
           });
         }
+
+        var admin = new User();
+        admin.loginid = "root";
+        admin.name = "admin";
+        admin.pass = "123";
+        admin.role = "teacher";
+        User.findOneById(admin.loginid, function(err, db_user2) {
+          if (err) {
+            return res.send({
+              status: "error",
+              errormessage: err
+            });
+          }
+
+          if (db_user2 == null) {
+            admin.save(function(err, res_user2) {
+              console.log(err);
+              if (err) {
+                return res.send({
+                  status: "error",
+                  errormessage: err
+                });
+              }
+
+            });
+          }
+        });
+
       });
     }
   });
   
-  User.findOneById({loginid: login_user.loginid}, function(err, db_user) {
+  User.findOneById(login_user.loginid, function(err, db_user) {
     if (err) {
       return res.send({
         status: "error",
@@ -70,14 +76,15 @@ exports.login = function(req, res) {
       });
     }
 
-    if (!db_user) {
+    if (db_user == null) {
       // user is not exist
-      console.log("in middlewares/user.js: " + login_user.loginid + "is not exist!");
+      console.log(login_user.loginid + " doesn't exist!");
       return res.send({
         status: "error",
         errormessage: (login_user.loginid + " is not exist!")
       });
     }
+    console.log(login_user.loginid + " exist!");
 
     db_user.comparePassword(login_user.pass, function(err, isMatch) {
       if (err) {
@@ -89,7 +96,7 @@ exports.login = function(req, res) {
 
       if (!isMatch) {
         // password is wrong
-        console.log("in middlewares/user.js: " + login_user.loginid + ": password is not match!");
+        console.log(login_user.loginid + ": password is not match!");
         return res.send({
           status: "error",
           errormessage: "Password is wrong!"
@@ -98,7 +105,9 @@ exports.login = function(req, res) {
       else {
         // password is right
         // add session
+        console.log("success");
         req.session.user = db_user;
+        console.log(db_user.role);
         return res.send({
           status: "success",
           title: "User",
@@ -107,4 +116,5 @@ exports.login = function(req, res) {
       }
     });
   });
+
 };
