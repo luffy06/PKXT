@@ -4,12 +4,12 @@ var selection = require('../middlewares/selection');
 var Course = express.Router();
 
 
-Course.get('/courseinfo', course.getinfo)
-      .get('/assesscourse', course.getproblemlist)
-      .get('/courselist', course.getcourselist)
-      .get('/problemlist', course.getproblemlist)
-      .get('/editproblem', course.editproblem)
-      .get('/unfinished', selection.getunfinished)
-      .get('/savedata', selection.savadata);
+Course.post('/courseinfo', course.getinfo)
+      .post('/assesscourse', course.getproblemlist)
+      .post('/courselist', course.getcourselist)
+      .post('/problemlist', course.getproblemlist)
+      .post('/editproblem', course.editproblem)
+      .post('/unfinished', selection.getunfinished)
+      .post('/savedata', selection.savadata);
 
 module.exports = Course;

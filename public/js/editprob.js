@@ -1,7 +1,8 @@
 $(function() {
-    //TODO:获取courseid
-    // var params = getParams(),
-    //     courseid = params['courseid'];
+    var params = getParams(),
+        courseid = params.courseid,
+        classid = params.classid,
+        problist = null;
 
 
     //获取问题信息
@@ -14,10 +15,12 @@ $(function() {
         dataType: 'json',
         success: function(json) {
             if (json.status === 'success') {
-                var data = {
-                        problist: json.problist
+                var problist = json.problist,
+                    data = {
+                        problist: problist
                     },
                     problistHtml = template('editprobTemplate',data);
+
                $('.content').append(problistHtml);
                $('.list-block').eq(0).show();
 
@@ -25,8 +28,6 @@ $(function() {
                 $.toast(json.status);
             }
         }
-
-
 
     });
 
@@ -49,37 +50,69 @@ $(function() {
         });
 
         $.ajax({
-            url: '/course/addproblem',
+            url: '/course/editproblem',
             type: 'post',
             data: {
+                "courseid": courseid ,
+                "classid": classid,
+                "type": 2
                 prob: {
                     "description": probdesc,
-                    "choice": choice
+                    "choice": choice,
+                    "classid":classid
+                }
+            },
+            dataType: 'json',
+            success: function(json) {
+                if (json.status === 'success') {
+                    var $listblock = $target.parent('.list-block');
+
+                    $.toast(json.status);
+                      //切换到下一题
+                    $listblock.hide();
+                    $listblock.next('.list-block').show();
+
+                } else {
+                    $.toast(json.status);
+                }
+            }
+        });
+
+    });
+
+
+
+    //删除问题
+    $('.button-danger').on('tap', function() {
+         $.ajax({
+            url: '/course/editproblem',
+            type: 'post',
+            data: {
+                "courseid": courseid ,
+                "classid": classid,
+                "type": 3
+                prob: {
+                    "description": probdesc,
+                    "choice": choice,
+                    "classid":classid
                 }
             },
             dataType: 'json',
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast(json.status);
-
-                      //切换到下一题
-                    $target.parent('.list-block').hide();
-                    $target.parent('.list-block').next('.list-block').show();
+                     //切换到下一题
+                    $listblock.remove();
+                    $listblock.next('.list-block').show();
 
                 } else {
                     $.toast(json.status);
                 }
             }
         })
-
     });
 
-
-    //取消
-    $('.button-danger').on('tap', function() {
-        $.router.load('courselist.html');
-    });
-
+    //TODO:上一题,注意题号，前后台需要同步 
 
 
 });
