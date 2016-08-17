@@ -29,12 +29,14 @@ var courseSchema = new mongoose.Schema({
 
 courseSchema.pre('save', function(next) {
   var course = this;
+
   if (this.isNew) {
     this.meta.createAt = this.meta.updateAt = Date.now();
   }
   else {
     this.meta.updateAt = Date.now();
   }
+  next();
 });
 
 // custom method
@@ -50,7 +52,7 @@ courseSchema.statics = {
   },
   findByCourseId: function(id, cb) {
     return this
-      .find({courseid: id})
+      .findOne({courseid: id})
       .exec(cb)
   }
 }

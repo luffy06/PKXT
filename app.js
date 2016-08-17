@@ -18,6 +18,7 @@ var course = require('./routes/course');
 
 var app = express();
 
+mongoose.Promise = global.Promise;
 mongoose.connect(dbUrl);
 
 // change To html 

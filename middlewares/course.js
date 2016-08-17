@@ -4,31 +4,101 @@ var Course = mongoose.model('course', CourseSchema);
 var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 
+function getUser(res_courselist, i, res) {
+  var loginid = res_courselist[i].teachername;
+  User.findOneById(loginid, function(err, user) {
+    if (err) {
+      return res.send({
+        status: "error",
+        errormessage: err
+      });
+    }
+    if (!user) {
+      return res.send({
+        status: "error",
+        errormessage: loginid + " doesn't exist!"
+      });
+    }
+    res_courselist[i].teachername = user.name;
+    if (i == res_courselist.length - 1) {
+      return res.send({
+        status: "success",
+        title: "CoureseInfo",
+        courselist: res_courselist
+      })
+    }
+    else {
+      getUser(res_courselist, i + 1, res);
+    }
+  });
+}
+
 exports.getinfo = function(req, res) {
   console.log("in getinfo")
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
+  // req_courseid = 1;
 
-  // for test
-  // var res_courselist = new Array();
+  var default_course = new Course();
+  default_course.courseid = "1";
+  default_course.coursename = "计算机网络";
+  
+  var userdata = new Array();
+  var name = new Array();
+  name[0] = "root";
+  name[1] = "root";
+  name[2] = "root";
+  for (var i = 0; i < 3; i++) {
+    userdata[i] = {};
+    userdata[i].classid = i + 1;
+    userdata[i].userid = name[i];
+    var problem = new Array();
+    for (var j = 0; j < 4; j++) {
+      problem[j] = {};
+      problem[j].problemid = j + 1;
+      problem[j].description = "你认为哪一部分最难懂？";
+      problem[j].choice = new Array();
+      problem[j].choice[0] = {};
+      problem[j].choice[0].choiceid = 1;
+      problem[j].choice[0].choicedesc = "网络层";
+      problem[j].choice[1] = {};
+      problem[j].choice[1].choiceid = 2;
+      problem[j].choice[1].choicedesc = "物理层";
+      problem[j].choice[2] = {};
+      problem[j].choice[2].choiceid = 3;
+      problem[j].choice[2].choicedesc = "传输层";
+      problem[j].choice[3] = {};
+      problem[j].choice[3].choiceid = 4;
+      problem[j].choice[3].choicedesc = "表示层";
+    }
+    userdata[i].problem = new Array();
+    userdata[i].problem = problem;
+  }
+  default_course.userdata = new Array();
+  default_course.userdata = userdata;
 
-  // for (var i = 0; i < 3; i++) {
-  //   var item_course = {};
-  //   item_course.coursename = "course.coursename";
-  //   item_course.courseid = "course.courseid";
-  //   item_course.classid = "userdata[i].classid";
-  //   item_course.teachername = "teachername"
-  //   res_courselist[i] = item_course;
-  // }
+  Course.findByCourseId("1", function(err, db_course) {
+    if (err) {
+      res.send({
+        stauts: "error",
+        errormessage: err
+      })
+    }
 
-  // return res.send({
-  //   status: "success",
-  //   title: "CoureseInfo",
-  //   courselist: res_courselist
-  // })
+    if (db_course == null) {
+      default_course.save(function(err, res) {
+        if (err) {
+          res.send({
+            status: "error",
+            errormessage: err
+          })
+        }
+      })
+    }
+  });
 
-  Course.findOne({courseid: req_courseid}, function(err, course) {
+  Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
       return res.send({
         status: "error",
@@ -36,47 +106,25 @@ exports.getinfo = function(req, res) {
       });
     }
 
-    // course is not exist
+    // course doesn't exist
     if (!course) {
-      console.log("middlewares/course.js: " + req_courseid + " is not exist!");
       return res.send({
         status: "error",
-        errormessage: req_courseid + " is not exist!"
+        errormessage: req_courseid + " doesn't exist!"
       });
     }
     // get course
     var res_courselist = new Array();
     
-    for (var i = 0; i < userdata.size; i++) {
+    for (var i = 0; i < course.userdata.length; i++) {
       var item_course = {};
       item_course.coursename = course.coursename;
       item_course.courseid = course.courseid;
-      item_course.classid = userdata[i].classid;
-      var loginid = userdata[i].userid;
-      User.findOneById({loginid: loginid}, function(err, user) {
-        if (err) {
-          return res.send({
-            status: "error",
-            errormessage: err
-          });
-        }
-        if (!user) {
-          return res.send({
-            stauts: "error",
-            errormessage: "the teacher id: " + loginid + " of course " 
-                        + course.coursename + " in class " 
-                        + userdata[i].classid + " is not exist!"
-          })
-        }
-        item_course.teachername = user.name;
-      });
+      item_course.classid = course.userdata[i].classid;
+      item_course.teachername = course.userdata[i].userid;
       res_courselist[i] = item_course;
     }
-    return res.send({
-      status: "success",
-      title: "CoureseInfo",
-      courselist: res_courselist
-    })
+    getUser(res_courselist, 0, res);
   });
 };
 
@@ -87,18 +135,12 @@ exports.getproblemlist = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
-
-  // for test
-  // var problemlist = new Array();
-  // return res.send({
-  //   stauts: "success",
-  //   title: "ProblemList",
-  //   problist: problemlist
-  // });
+  // req_courseid = 1;
+  // req_classid = 1;
 
   // code repeat too much
   // too bad
-  Course.findOne({courseid: req_courseid}, function(err, course) {
+  Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
       return res.send({
         status: "error",
@@ -106,18 +148,19 @@ exports.getproblemlist = function(req, res) {
       });
     }
 
-    // course is not exist
+    // course doesn't exist
     if (!course) {
-      console.log("middlewares/course.js: " + req_courseid + " is not exist!");
+      console.log(req_courseid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: req_courseid + " is not exist!"
+        errormessage: req_courseid + " doesn't exist!"
       });
     }
 
+    console.log(course);
     var index = -1;
     var userdata = course.userdata;
-    for (var i = 0; i < userdata.size; i++) {
+    for (var i = 0; i < userdata.length; i++) {
       if (userdata[i].classid == req_classid) {
         index = i;
         break;
@@ -125,10 +168,10 @@ exports.getproblemlist = function(req, res) {
     }
     // classid is wrong
     if (index == -1) {
-      console.log("middlewares/course.js: " + req_classid + " is not exist!");
+      console.log(req_classid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: req_classid + " is not exist!"
+        errormessage: req_classid + " doesn't exist!"
       })
     }
 
@@ -145,15 +188,7 @@ exports.getproblemlist = function(req, res) {
 
 exports.getcourselist = function(req, res) {
   var userid = req.session.user.loginid;
-
-  // for test
-  // var res_courselist = new Array();
-
-  // return res.send({
-  //   status: "success",
-  //   title: "CourseList",
-  //   courselist: res_courselist
-  // })
+  // userid = "root";
 
   Course.fetchByUserId(userid, function(err, courselist) {
     if (err) {
@@ -165,7 +200,7 @@ exports.getcourselist = function(req, res) {
 
     // get course list
     var res_courselist = new Array();
-    for (var i = 0; i < courselist.size; i++) {
+    for (var i = 0; i < courselist.length; i++) {
       var course = courselist[i];
       res_courselist[i] = {};
       res_courselist[i].courseid = course.courseid;
@@ -187,16 +222,10 @@ exports.editproblem = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
+
   var action = req.query.type;
   
-  // for test
-
-  // return res.send({
-  //   stauts: "success",
-  //   type: action
-  // })
-
-  Course.findOne({courseid: req_courseid}, function(err, course) {
+  Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
       return res.send({
         status: "error",
@@ -204,18 +233,18 @@ exports.editproblem = function(req, res) {
       });
     }
 
-    // course is not exist
+    // course doesn't exist
     if (!course) {
-      console.log("middlewares/course.js: " + req_courseid + " is not exist!");
+      console.log("middlewares/course.js: " + req_courseid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: req_courseid + " is not exist!"
+        errormessage: req_courseid + " doesn't exist!"
       });
     }
 
     var index = -1;
     var userdata = course.userdata;
-    for (var i = 0; i < userdata.size; i++) {
+    for (var i = 0; i < userdata.length; i++) {
       if (userdata[i].classid == req_classid) {
         index = i;
         break;
@@ -223,28 +252,28 @@ exports.editproblem = function(req, res) {
     }
 
     if (index == -1) {
-      console.log("middlewares/course.js: " + req_classid + " is not exist!");
+      console.log("middlewares/course.js: " + req_classid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: classid + "is not exist!"
+        errormessage: classid + "doesn't exist!"
       })
     }
 
     // 1 add 2 update 3 delete
     if (action == 1) {
       var problem = req.body.prob;
-      var size = userdata[index].problem.size;
-      problem.problemid = size;
+      var length = userdata[index].problem.length;
+      problem.problemid = length;
       var choice = problem.choice;
-      for (var i = 0; i < choice.size; i++)
+      for (var i = 0; i < choice.length; i++)
         problem.choice[i].choiceid = i + 1;
-      course.userdata[index].problem.splice(size - 1, 0, problem);
+      course.userdata[index].problem.splice(length - 1, 0, problem);
     }
     else if (action == 2) {
       var problem = req.body.prob;
       var problemid = req.query.problemid;
       var ind = -1;
-      for (var i = 0; i < userdata[index].problem.size; i++) {
+      for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
           ind = i;
           break;
@@ -253,18 +282,15 @@ exports.editproblem = function(req, res) {
       if (ind == -1) {
         return res.send({
           stauts: "error",
-          errormessage: problemid + " is not exist"
+          errormessage: problemid + " doesn't exist"
         })
       }
       course.userdata[index].problem.splice(ind, 1, probelm);
-      return res.send({
-        stauts: "success"
-      })
     }
     else if (action == 3) {
       var problemid = req.query.problemid;
       var ind = -1;
-      for (var i = 0; i < userdata[index].problem.size; i++) {
+      for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
           ind = i;
           break;
@@ -273,13 +299,10 @@ exports.editproblem = function(req, res) {
       if (ind == -1) {
         return res.send({
           stauts: "error",
-          errormessage: problemid + " is not exist"
+          errormessage: problemid + " doesn't exist"
         })
       }
       course.userdata[index].problemid.splice(ind, 1);
-      return res.send({
-        stauts: "success"
-      })
     }
     else {
       console.log("cannot distinguish action: " + action);

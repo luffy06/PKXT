@@ -7,13 +7,6 @@ exports.login = function(req, res) {
   login_user.loginid = req.body.name;
   login_user.pass = req.body.pass;
 
-  // for test
-  // req.session.user = login_user;
-  // return res.send({
-  //   status: "success",
-  //   title: "User",
-  //   role: "student"
-  // })
   var user = new User();
   user.loginid = "user";
   user.name = "student";
