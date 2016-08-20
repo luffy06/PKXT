@@ -10,7 +10,8 @@ $(function() {
         url: '/course/problemlist',
         type: 'post',
         data: {
-
+            courseid: courseid,
+            classid: classid
         },
         dataType: 'json',
         success: function(json) {
@@ -19,10 +20,10 @@ $(function() {
                     data = {
                         problist: problist
                     },
-                    problistHtml = template('editprobTemplate',data);
+                    problistHtml = template('editprobTemplate', data);
 
-               $('.content').append(problistHtml);
-               $('.list-block').eq(0).show();
+                $('.content').append(problistHtml);
+                $('.prob').eq(0).show();
 
             } else {
                 $.toast(json.status);
@@ -36,16 +37,21 @@ $(function() {
 
 
     //提交，并下一题
-    $('.button-success').on('tap', function(event) {
-        var probdesc = $('#probdesc').val(),
-            $input = $('.list-block:visible .item-input input'),
+    $('.content').on('tap', '.button-success', function(event) {
+        var $prob = $('.prob:visible'),
+            probdesc = $prob.find('.probdesc').val(),
+            problemid = $prob.data('problemid'),
+            $input = $prob.find('.item-input input'),
             $target = $(event.target),
             choice = [];
+
         $input.each(function(index) {
-            var obj = {
-                choiceid: index, //??
-                choicedes: $(this).val()
-            };
+            var $this = $(this),
+                $item = $this.parents('.item-content'),
+                obj = {
+                    choiceid: $item.find('.choiceid').text(),
+                    choicedes: $(this).val()
+                };
             choice.push(obj);
         });
 
@@ -53,25 +59,36 @@ $(function() {
             url: '/course/editproblem',
             type: 'post',
             data: {
-                "courseid": courseid ,
+                "courseid": courseid,
                 "classid": classid,
-                "type": 2
-                prob: {
+                "type": 2,
+                "prob": {
+                    "problemid": problemid,
                     "description": probdesc,
                     "choice": choice,
-                    "classid":classid
+                    "classid": classid
                 }
             },
             dataType: 'json',
             success: function(json) {
                 if (json.status === 'success') {
-                    var $listblock = $target.parent('.list-block');
+                    var $listblock = $target.parents('.prob');
 
                     $.toast(json.status);
-                      //切换到下一题
-                    $listblock.hide();
-                    $listblock.next('.list-block').show();
+                    //最后一题
+                    if(!$listblock.next('.prob')[0]){
+                          $.alert('点击确定返回课程信息列表', '编辑完成', function() {
+                            routerTo('courselist.html');
+                        });
 
+                        return;
+                    }
+
+                    //切换到下一题
+                    $listblock.slideRight(function() {
+                        $listblock.hide();
+                        $listblock.next('.prob').show();
+                    });
                 } else {
                     $.toast(json.status);
                 }
@@ -83,28 +100,55 @@ $(function() {
 
 
     //删除问题
-    $('.button-danger').on('tap', function() {
-         $.ajax({
+    $('.content').on('tap', '.button-danger', function() {
+        var $prob = $('.prob:visible'),
+            probdesc = $prob.find('.probdesc').val(),
+            problemid = $prob.data('problemid'),
+            $input = $prob.find('.item-input input'),
+            $target = $(event.target),
+            choice = [];
+
+        $input.each(function(index) {
+            var $this = $(this),
+                $item = $this.parents('.item-content'),
+                obj = {
+                    choiceid: $item.find('.choiceid').text(),
+                    choicedes: $(this).val()
+                };
+            choice.push(obj);
+        });
+        $.ajax({
             url: '/course/editproblem',
             type: 'post',
             data: {
-                "courseid": courseid ,
+                "courseid": courseid,
                 "classid": classid,
-                "type": 3
-                prob: {
+                "type": 3,
+                "prob": {
+                    "problemid": problemid,
                     "description": probdesc,
                     "choice": choice,
-                    "classid":classid
+                    "classid": classid
                 }
             },
             dataType: 'json',
             success: function(json) {
                 if (json.status === 'success') {
+                    var $listblock = $target.parents('.prob');
                     $.toast(json.status);
-                     //切换到下一题
-                    $listblock.remove();
-                    $listblock.next('.list-block').show();
+                    //最后一题
+                    if(!$listblock.next('.prob')[0]){
+                          $.alert('点击确定返回课程信息列表', '编辑完成', function() {
+                            routerTo('courselist.html');
+                        });
 
+                        return;
+                    }
+                    //切换到下一题
+                    $listblock.slideRight(function() {
+                        $listblock.next('.prob').show();
+                        $listblock.remove();
+                    });
                 } else {
                     $.toast(json.status);
                 }
@@ -115,4 +159,7 @@ $(function() {
     //TODO:上一题,注意题号，前后台需要同步 
 
 
+    //末尾一定要添加，否则组件bug
+    //添加在所有pageInit事件后
+    $.init();
 });

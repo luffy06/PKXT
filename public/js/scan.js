@@ -39,17 +39,11 @@ $(function() {
             courseid = $card.find('.courseid').text(),
             classid = $card.find('.classid').text();
 
-        window.location.href = 'assess.html?courseid=' + courseid + '&classid=' + classid;
+        routerTo('assess.html',{
+            courseid:courseid,
+            classid:classid
+        });
     });
-
-
-
-
-
-
-
-
-
 
 
     //末尾一定要添加，否则组件bug

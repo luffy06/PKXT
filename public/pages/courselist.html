@@ -23,9 +23,11 @@
                 <h1 class="title">课程信息</h1>
             </header>
             <!-- 这里是页面内容区 -->
-            <div class="content">
-                <div class="result">
-                
+            <div class="content native-scroll">
+                <div class="list-block cards-list">
+                    <ul class="result">
+                    
+                    </ul>
                 </div>
             </div>
         </div>
@@ -53,17 +55,20 @@
     <script type='text/javascript' src='/js/courselist.js' charset='utf-8'></script>
     <script id="courselistTemplate" type="text/html">
         {{each courselist}}
-        <div class='card'>
-            <div class='card-header'><span class="courseid">课程号:{{$value.courseid}}</span><span class='classid'>课堂号:{{$value.classid}}</span><span>课程名:{{$value.coursename}}</span></div>
+        <li class='card'>
+            <div class='card-header'><span>课程名:{{$value.coursename}}</span></div>
             <div class='card-content'>
                 <div class='card-content-inner'>
                     <p>任课老师:{{$value.teachername}}</p>
-                    <p>上课地点:</p>
-                    <p>上课时间:</p>
+                    <p>课程号:<span class="courseid">{{$value.courseid}}</span></p>
+                    <p>课堂号:<span class='classid'>{{$value.classid}}</span></p>
                 </div>
-                <div class='card-footer'><a href='javascript:;' class='button button-fill button-primary assessBtn'>开始评课</a></div>
+                <div class='card-footer'>
+                <a href='javascript:;' class='button button-fill button-primary editBtn'>修改问题</a>
+                <a href='javascript:;' class='button button-fill button-primary addBtn'>新增问题</a>
+                </div>
             </div>
-        </div>
+        </li>
         {{/each}}
     </script>
 </body>

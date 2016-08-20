@@ -2,9 +2,7 @@ $(function() {
     $.ajax({
         url: '/course/courseinfo',
         type: 'post',
-        data: {
-
-        },
+        data: {},
         dataType: 'json',
         success: function(json) {
             if (json.status === 'success') {
@@ -12,6 +10,7 @@ $(function() {
                         courselist: json.courselist
                     },
                     courselistHtml = template('courselistTemplate', data);
+
                 $('.result').append(courselistHtml);
             } else {
                 $.toast(json.status);
@@ -20,21 +19,34 @@ $(function() {
     });
 
     //修改问题
-    $('.result .card .editBtn').on('tap', function(event) {
+    $('.result').on('tap', '.editBtn', function(event) {
         var $target = $(event.target),
-            $parentCard = $target.parent('.card'),
+            $parentCard = $target.parents('.card'),
             classid = $parentCard.find('.classid').text(),
             courseid = $parentCard.find('.courseid').text();
 
-        window.location.href = 'editprob.html?courseid=' + courseid + '&classid=' + classid;
+        routerTo('editprob.html', {
+            courseid: courseid,
+            classid: classid
+        });
     });
 
     //增加问题
-    $('.result .card .addBtn').on('tap', function(event) {
+    $('.result').on('tap', '.addBtn', function(event) {
         var $target = $(event.target),
-            courseid = $target.parent('.card').find('.courseid').text();
-        window.location.href = 'addprob.html?courseid=' + courseid + '&classid=' + classid;
+            $parentCard = $target.parents('.card'),
+            courseid = $parentCard.find('.courseid').text(),
+            classid = $parentCard.find('.classid').text();
+
+        routerTo('addprob.html', {
+            courseid: courseid,
+            classid: classid
+        });
     });
 
+    
+    //末尾一定要添加，否则组件bug
+    //添加在所有pageInit事件后
+    $.init();
 
 });

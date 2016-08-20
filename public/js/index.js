@@ -13,7 +13,7 @@ $(function() {
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast('登录成功');
-                    window.location.href = 'scan.html';
+                    routerTo('scan.html');
                 } else {
                     $.toast(json.errormessage);
                 }
@@ -52,8 +52,7 @@ $(function() {
                         role: role
                     };
                     setStorage('ccnu_user', user);
-
-                    window.location.href = 'scan.html';
+                    routerTo('scan.html');
 
                 } else {
                     $.alert(json.errormessage); //TODO:更改为相应的失败信息

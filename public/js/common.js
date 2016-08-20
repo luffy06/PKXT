@@ -89,9 +89,12 @@ function stopTimer(timer, timerName) {
 function routerTo(page, params) {
     var href = page + '?';
 
-    for (var i in params) {
-        href += (i + '=' + params[i] + '&');
+    if (params) {
+        for (var i in params) {
+            href += (i + '=' + params[i] + '&');
+        }
     }
+
     window.location.href = href.slice(0, href.length - 1);
 }
 
@@ -119,18 +122,18 @@ $(function() {
     /*侧边栏跳转功能*/
     //搜索课程scan.html
     $('.scandBtn').on('tap', function() {
-        window.location.href = 'scan.html';
+        routerTo('scan.html');
     });
 
 
     //未完成unfinished.html
     $('.unfinishedBtn').on('tap', function() {
-        window.location.href = 'unfinished.html';
+        routerTo('unfinished.html');
     });
 
     //课程信息列表
     $('.courselistBtn').on('tap', function() {
-        window.location.href = 'courselist.html';
+        routerTo('courselist.html');
     });
 
 
@@ -145,7 +148,7 @@ $(function() {
                 if (json.status === 'success') {
                     $.toast('登出成功');
                     removeStorage('ccnu_user');
-                    window.location.href = 'index.html';
+                    routerTo('index.html');
                 } else {
                     $.toast(json.errormessage);
                 }
@@ -153,6 +156,14 @@ $(function() {
         });
 
     });
+
+    //滑动效果
+    $.fn.slideRight = function(callback) {
+        this.addClass('slideOutRight animated');
+        setTimeout(function(){
+            callback();
+        },1000);
+    };
 
 
 

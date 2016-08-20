@@ -10,6 +10,42 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="stylesheet" href="/css/sm.min.css">
+     <style>
+    @-webkit-keyframes slideOutRight {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0)
+        }
+    }
+    
+    @keyframes slideOutRight {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(100%, 0, 0);
+            transform: translate3d(100%, 0, 0)
+        }
+    }
+     .animated {
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both
+    }
+    
+    .slideOutRight {
+        -webkit-animation-name: slideOutRight;
+        animation-name: slideOutRight
+    }
+    </style>
 </head>
 
 <body>
@@ -49,73 +85,44 @@
     <script type='text/javascript' src='/js/editprob.js' charset='utf-8'></script>
     <script id="editprobTemplate" type="text/html">
         {{each problist}}
-        <div class="list-block" style="display:none">
-            <ul>
-                <li class="align-top">
-                    <div class="item-content">
-                        <div class="item-media"><i class="icon icon-form-comment"></i></div>
-                        <div class="item-inner">
-                            <div class="item-title label">问题描述</div>
-                            <div class="item-input">
-                                <textarea id="prodesc" placeholder="请输入问题描述"></textarea>
+        <div class="prob"  style="display:none"  data-problemid="{{$value.problemid}}">
+            <div class="list-block">
+                <ul>
+                    <li class="align-top">
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">问题{{$value.problemid}}描述</div>
+                                <div class="item-input">
+                                    <textarea class="prodesc" placeholder="请输入问题描述">{{$value.description}}</textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                <!-- Text inputs -->
-                <li>
-                    <div class="item-content">
-                        <div class="item-media"><i class="icon icon-form-name"></i></div>
-                        <div class="item-inner">
-                            <div class="item-title label">选项A</div>
-                            <div class="item-input">
-                                <input type="text" placeholder="请输入选项A">
+                    </li>
+                    <!-- Text inputs -->
+                    {{each $value.choice}}
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-name"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">选项<span class="choiceid">{{$value.choiceid}}</span></div>
+                                <div class="item-input">
+                                    <input type="text" placeholder="请输入选项{{$value.choiceid}}" value="{{$value.choicedesc}}">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-media"><i class="icon icon-form-name"></i></div>
-                        <div class="item-inner">
-                            <div class="item-title label">选项B</div>
-                            <div class="item-input">
-                                <input type="text" placeholder="请输入选项B">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-media"><i class="icon icon-form-name"></i></div>
-                        <div class="item-inner">
-                            <div class="item-title label">选项C</div>
-                            <div class="item-input">
-                                <input type="text" placeholder="请输入选项C">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-media"><i class="icon icon-form-name"></i></div>
-                        <div class="item-inner">
-                            <div class="item-title label">选项D</div>
-                            <div class="item-input">
-                                <input type="text" placeholder="请输入选项D">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="content-block">
-            <div class="row">
-                <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger">删除</a></div>
-                <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success">提交</a></div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger">删除</a></div>
+                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success">提交</a></div>
+                </div>
             </div>
         </div>
-        {{each}}
+        {{/each}}
     </script>
 </body>
 

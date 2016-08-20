@@ -5,14 +5,18 @@ $(function() {
 
     //提交
     $('.button-success').on('tap', function() {
-        var probdesc = $('#probdesc').val(),
-            $input = $('.item-input input'),
+        var $prob = $('.prob:visible'),
+            probdesc = $prob.find('.probdesc').val(),
+            $input = $prob.find('.item-input input'),
             choice = [];
+
         $input.each(function(index) {
-            var obj = {
-                choiceid: index,
-                choicedes: $(this).val()
-            };
+            var $this = $(this),
+                $item = $this.parents('.item-content'),
+                obj = {
+                    choiceid: $item.find('.choiceid').text(),
+                    choicedes: $(this).val()
+                };
             choice.push(obj);
         });
 
@@ -22,7 +26,7 @@ $(function() {
             data: {
                 "courseid": courseid ,
                 "classid": classid,
-                "type": 1
+                "type": 1,
                 "prob": {
                     "description": probdesc,
                     "choice": choice,
@@ -32,7 +36,7 @@ $(function() {
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast(json.status);
-                    window.location.href = 'courselist.html';
+                    routerTo('courselist.html');
                 } else {
                     $.toast(json.status);
                 }
@@ -44,9 +48,12 @@ $(function() {
 
     //取消
     $('.button-danger').on('tap', function() {
-        window.location.href = 'courselist.html';
+        routerTo('courselist.html');
     });
 
 
+    //末尾一定要添加，否则组件bug
+    //添加在所有pageInit事件后
+    $.init();
 
 });
