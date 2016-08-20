@@ -35,10 +35,10 @@ $(function() {
     //评课
     $('.content').on('tap', '.assessBtn', function(event) {
         var $target = $(event.target),
-            courseid = $target.parent('.card').find('.courseid').text(),
-            classid = $target.parent('.card').find('.classid').text();
+            $card = $target.parents('.card'),
+            courseid = $card.find('.courseid').text(),
+            classid = $card.find('.classid').text();
 
-        //url上传递courseid
         window.location.href = 'assess.html?courseid=' + courseid + '&classid=' + classid;
     });
 

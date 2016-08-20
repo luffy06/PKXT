@@ -81,7 +81,7 @@ exports.getinfo = function(req, res) {
   Course.findByCourseId("1", function(err, db_course) {
     if (err) {
       res.send({
-        stauts: "error",
+        status: "error",
         errormessage: err
       })
     }
@@ -179,7 +179,7 @@ exports.getproblemlist = function(req, res) {
     var problemlist = course.userdata[i].problem;
 
     return res.send({
-      stauts: "success",
+      status: "success",
       title: "ProblemList",
       problist: problemlist
     });
@@ -281,7 +281,7 @@ exports.editproblem = function(req, res) {
       }
       if (ind == -1) {
         return res.send({
-          stauts: "error",
+          status: "error",
           errormessage: problemid + " doesn't exist"
         })
       }
@@ -298,7 +298,7 @@ exports.editproblem = function(req, res) {
       }
       if (ind == -1) {
         return res.send({
-          stauts: "error",
+          status: "error",
           errormessage: problemid + " doesn't exist"
         })
       }
@@ -315,7 +315,7 @@ exports.editproblem = function(req, res) {
         });
       }
       return res.send({
-        stauts: "success"
+        status: "success"
       })
     });
   });

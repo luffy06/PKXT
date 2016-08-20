@@ -47,7 +47,8 @@ function getParams() {
 
 //返回学生还是老师判定
 function returnStuOrTea() {
-    var user = getStorage('user');
+    var user = getStorage('ccnu_user');
+
     if (user.role === 'teacher') {
         return true;
     }
@@ -98,19 +99,19 @@ function routerTo(page, params){
 $(function() {
     //TODO:change CDN
 
-    //TODO:存在侧边栏的页面需要进行学生还是老师的判定
-    // if($('.panel-left')[0]){
-    //   if(returnStuOrTea()){
-    //     $('.courselistBtn').show();
-    //   }  
-    // }
+    //存在侧边栏的页面需要进行学生还是老师的判定
+    if($('.panel-left')[0]){
+      if(returnStuOrTea()){
+        $('.courselistBtn').show();//若为教师，显示课程列表
+      }  
+    }
 
-    //TODO:存在侧边栏的页面需要更改用户名
-    // var $username = $('#username');
-    // if($username[0]){
-    //     var username = window.localStorage.getItem('username');
-    //     $username.text(username);
-    // }
+    //存在侧边栏的页面需要更改用户名
+    var $username = $('#username');
+    if($username[0]){
+        var username = getStorage('ccnu_user').name;
+        $username.text(username);
+    }
 
 
 
@@ -141,10 +142,11 @@ $(function() {
             dataType: 'json',
             success: function(json) {
                 if (json.status === 'success') {
-                    $.toast(json.status);
+                    $.toast('登出成功');
+                    removeStorage('ccnu_user');
                     window.location.href = 'index.html';
                 } else {
-                    $.toast(json.status);
+                    $.toast(json.errormessage);
                 }
             }
         });

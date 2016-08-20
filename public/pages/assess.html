@@ -35,7 +35,7 @@
                         <span id='time'>0</span>
                     </div>
                 </div>
-                <div class="content-block">
+                <div class="content-block problemList">
                 </div>
             </div>
         </div>
@@ -63,34 +63,34 @@
     <script id="problemTemplate" type="text/html">
         {{each problist}}
         <div class="card" style="display: none">
-            <div class="card-header">问题{{$index}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
+            <div class="card-header">问题{{$index+1}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
             <div class="card-content">
-                <div class="card-content-inner" id='questionContent'>{{$value.description}}</div>
+                <div class="card-content-inner" class='questionContent'>{{$value.description}}</div>
             </div>
-            <div class="card-footer" id="questionChoices">
+            <div class="card-footer" class="questionChoices">
                 <div class="list-block">
                     <ul>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary aBtn" id="{{$value.choice[0].choiceid}}">{{$value.choice[0].choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[0].choiceid}}">{{$value.choice[0].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary bBtn" id="{{$value.choice[1].choiceid}}">{{$value.choice[1].choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[1].choiceid}}">{{$value.choice[1].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary cBtn" id="{{$value.choice[2].choiceid}}">{{$value.choice[2].choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[2].choiceid}}">{{$value.choice[2].choicedesc}}</a>
                             </p>
                         </li>
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary dBtn" id="{{$value.choice[3].choiceid}}">{{$value.choice[3].choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[3].choiceid}}">{{$value.choice[3].choicedesc}}</a>
                             </p>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        {{each}}
+        {{/each}}
     </script>
 </body>
 

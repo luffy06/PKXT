@@ -14,13 +14,13 @@ $(function() {
         dataType: 'json',
         success: function(json) {
             if (json.status === 'success') {
-                $('.content-block').empty();
+                $('.problemList').empty();
                 //TODO:根据问题列表渲染数据
                 var data = {
                         problist: json.problist
                     },
                     probHtml = template('problemTemplate', data);
-                $('.content-block').append(probHtml);
+                $('.problemList').append(probHtml);
                 $('.card').eq(0).show();
 
                 timer = startTimer($("span#time"),'timer');
@@ -32,11 +32,16 @@ $(function() {
 
     
     //计分并切换到下一题
-    $(".content-block ul li a").on('tap', function(event) {
-        var $target = $(event.target),
-            $parentCard = $target.parent('.card')
+    $(".content-block").on('tap', function(event) {
+        var $target = $(event.target);
+
+        if(!$target.hasClass('button')){
+            return;
+        }
+
+        var $parentCard = $target.parents('.card'),
             problemid = $parentCard.find('.problemid').text(),
-            choiceid = $target[0].id;
+            choiceid = $target.data('choiceid');
 
         $.ajax({
             url: '/course/savedata',
@@ -53,6 +58,8 @@ $(function() {
                     //最后一题
                     if(!$parentCard.next('.card')[0]){
                         //TODO:显示答题完成
+
+                        
                         stopTimer(timer,'timer');
                         window.location.href = 'scan.html';
                         return;
@@ -66,7 +73,6 @@ $(function() {
                     $.toast(json.status);
                 }
             }
-
         });
 
     });
