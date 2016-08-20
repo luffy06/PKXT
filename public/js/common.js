@@ -59,7 +59,7 @@ function returnStuOrTea() {
 //自动计时
 function startTimer($time, timerName) {
     //自动计时
-    var time = parseInt(window.localStorage.getItem(timerName),10) || 0,
+    var time = parseInt(window.localStorage.getItem(timerName), 10) || 0,
         hour,
         min,
         sec,
@@ -86,13 +86,13 @@ function stopTimer(timer, timerName) {
 
 
 //路由
-function routerTo(page, params){
+function routerTo(page, params) {
     var href = page + '?';
 
-    for(var i in params){
+    for (var i in params) {
         href += (i + '=' + params[i] + '&');
     }
-    window.location.href = href.slice(0, href.length-1); 
+    window.location.href = href.slice(0, href.length - 1);
 }
 
 
@@ -100,18 +100,19 @@ $(function() {
     //TODO:change CDN
 
     //存在侧边栏的页面需要进行学生还是老师的判定
-    if($('.panel-left')[0]){
-      if(returnStuOrTea()){
-        $('.courselistBtn').show();//若为教师，显示课程列表
-      }  
+    if ($('.panel-left')[0]) {
+        //存在侧边栏的页面需要更改用户名
+        var $username = $('#username');
+        if ($username[0] && getStorage('ccnu_user')) {
+            var username = getStorage('ccnu_user').name;
+            $username.text(username);
+        }
+        if (returnStuOrTea()) {
+            $('.courselistBtn').show(); //若为教师，显示课程列表
+        }
     }
 
-    //存在侧边栏的页面需要更改用户名
-    var $username = $('#username');
-    if($username[0]){
-        var username = getStorage('ccnu_user').name;
-        $username.text(username);
-    }
+
 
 
 

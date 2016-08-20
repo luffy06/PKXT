@@ -1,23 +1,26 @@
 $(function() {
     //TODO:调用本地数据，直接请求登录
     var user = getStorage('ccnu_user');
-    $.ajax({
-        url: '/user/login',
-        type: 'post',
-        data: {
-            "name": user.name,
-            "pass": user.pass
-        },
-        dataType: 'json',
-        success: function(json) {
-            if (json.status === 'success') {
-                $.toast('登录成功');
-                window.location.href = 'scan.html';
-            } else {
-                $.toast(json.errormessage);
+    if (user) {
+        $.ajax({
+            url: '/user/login',
+            type: 'post',
+            data: {
+                "name": user.name,
+                "pass": user.pass
+            },
+            dataType: 'json',
+            success: function(json) {
+                if (json.status === 'success') {
+                    $.toast('登录成功');
+                    window.location.href = 'scan.html';
+                } else {
+                    $.toast(json.errormessage);
+                }
             }
-        }
-    });
+        });
+    }
+
 
 
 
