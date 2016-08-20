@@ -59,13 +59,6 @@ app.use(index);
 // 可以不需要logout，直接发送一个get请求，然后前端重定向
 // ? 不用logout的话，不需要删除session中的user么?
 
-app.use('/user/logout', function(req, res) {
-  delete req.session.user;
-  delete app.locals.user;
-  console.log("logout! Redirect to index!")
-});
-
-
 app.use('/user', user);
 app.use('/course', course);
 

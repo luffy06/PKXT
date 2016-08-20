@@ -31,6 +31,7 @@ selectionSchema.pre('save', function(next) {
   else {
     this.meta.updateAt = Date.now();
   }
+  next()
 });
 
 // statics method
@@ -42,7 +43,7 @@ selectionSchema.statics = {
   },
   findByUserId: function(id, cb) {
     return this
-      .find({"userid": id})
+      .findOne({"userid": id})
       .exec(cb)
   }
 }
