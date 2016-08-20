@@ -107,7 +107,7 @@ exports.getinfo = function(req, res) {
     }
 
     // course doesn't exist
-    if (!course) {
+    if (course == null) {
       return res.send({
         status: "error",
         errormessage: req_courseid + " doesn't exist!"

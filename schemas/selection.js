@@ -38,7 +38,7 @@ selectionSchema.pre('save', function(next) {
 selectionSchema.statics = {
   fetchUnfinishedByUserId: function(id, cb) {
     return this
-      .find({"userid": id, "selectiondata.finished": false})
+      .findOne({"userid": id})
       .exec(cb)
   },
   findByUserId: function(id, cb) {

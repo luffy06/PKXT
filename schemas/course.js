@@ -52,7 +52,7 @@ courseSchema.statics = {
   },
   findByCourseId: function(id, cb) {
     return this
-      .findOne({courseid: id})
+      .findOne({"courseid": id})
       .exec(cb)
   }
 }

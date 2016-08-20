@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
+var CourseSchema = require('../schemas/course');
+var Course = mongoose.model('course', CourseSchema);
 
 exports.getunfinished = function(req, res) {
   var user = req.session.user;
@@ -62,10 +64,13 @@ exports.savadata = function(req, res) {
       selection.selectiondata = new Array()
 
     var data = selection.selectiondata;
-    var courseid = req.query.courseid;
-    var classid = req.query.classid;
-    // var finished = 
-    
+    var courseid = req.body.courseid;
+    if (req.body.courseid == null)
+      courseid = req.query.courseid;
+    var classid = req.body.classid;
+    if (req.body.classid == null)
+      classid = req.query.classid;
+
     var index = -1;
     for (var i = 0; i < data.length; i++) {
       if (data[i].courseid == courseid 
@@ -92,6 +97,7 @@ exports.savadata = function(req, res) {
       choiceid = req.query.choiceid;
 
     var ind = -1;
+    var finished = false;
 
     for (var i = 0; i < problem.length; i++) {
       if (problem[i].problemid == problemid) {
@@ -103,19 +109,56 @@ exports.savadata = function(req, res) {
       ind = problem.length;
       selection.selectiondata[index].problem[ind] = {};
     }
-    selection.selectiondata[index].problem[ind].problemid = problemid;
-    selection.selectiondata[index].problem[ind].choiceid = choiceid;
 
-    selection.save(function(err, _selection) {
+    Course.findByCourseId(courseid, function(err, db_course) {
       if (err) {
-        res.send({
-          status: "error",
+        return res.send({
+          status: "error", 
           errormessage: err
         })
       }
-    })
-    return res.send({
-      status: "success"
+
+      if (db_course == null) {
+        return res.send({
+          status: "error", 
+          errormessage: courseid + " doesn't exist!"
+        })
+      }
+
+      var len = -1;
+      for (var i = 0; i < db_course.userdata.length; i++) {
+        if (db_course.userdata[i].classid == classid) {
+          len = db_course.userdata[i].problem.length;
+          break;
+        }
+      }
+
+      if (len == -1) {
+        console.log(classid + " doesn't exist!");
+        return res.send({
+          status: "error",
+          errormessage: classid + " doesn't exist!"
+        })
+      }
+
+      if (len == problem.length)
+        finished = true;
+
+      selection.selectiondata[index].problem[ind].problemid = problemid;
+      selection.selectiondata[index].problem[ind].choiceid = choiceid;
+      selection.selectiondata[index].finished = finished;
+
+      selection.save(function(err, _selection) {
+        if (err) {
+          res.send({
+            status: "error",
+            errormessage: err
+          })
+        }
+      })
+      return res.send({
+        status: "success"
+      })
     })
   })
 }
