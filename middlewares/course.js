@@ -38,7 +38,7 @@ exports.getinfo = function(req, res) {
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
-  // req_courseid = 1;
+  req_courseid = 1;
 
   var default_course = new Course();
   default_course.courseid = "1";
@@ -157,7 +157,6 @@ exports.getproblemlist = function(req, res) {
       });
     }
 
-    console.log(course);
     var index = -1;
     var userdata = course.userdata;
     for (var i = 0; i < userdata.length; i++) {
@@ -177,6 +176,12 @@ exports.getproblemlist = function(req, res) {
 
     // get problem list
     var problemlist = course.userdata[i].problem;
+    for (var i = 0; i < problemlist.length; i++) {
+      problemlist[i]._id = undefined;
+      for (var j = 0; j < problemlist[i].choice.length; j++) {
+        problemlist[i].choice[j]._id = undefined;
+      }
+    }
 
     return res.send({
       status: "success",
