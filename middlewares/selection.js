@@ -3,6 +3,66 @@ var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
 var CourseSchema = require('../schemas/course');
 var Course = mongoose.model('course', CourseSchema);
+var UserSchema = require('../schemas/user');
+var User = mongoose.model('user', UserSchema);
+
+function getCourse(res_courselist, i, selectiondata, j, res) {
+  var item = {};
+  item.courseid = selectiondata[j].courseid;
+  item.classid = selectiondata[j].classid;
+  Course.findByCourseId(item.courseid, function(err, db_course) {
+    if (err) {
+      return res.send({
+        status: "error",
+        errormessage: err
+      })
+    }
+    if (db_course == null) {
+      return res.send({
+        status: "error",
+        errormessage: item.courseid + " doesn't exist"
+      })
+    }
+    var userid = -1;
+    for (var k = 0; k < db_course.userdata.length; k++) {
+      if (db_course.userdata[k].classid == item.classid) {
+        userid = db_course.userdata[k].userid;
+        break;
+      }
+    }
+    if (userid == -1) {
+      return res.send({
+        status: "error",
+        errormessage: "user of " + item.classid + " doesn't exist"
+      })
+    }
+    item.coursename = db_course.coursename;
+    User.findOneById(userid, function(err, db_user) {
+      if (err) {
+        return res.send({
+          status: "error",
+          errormessage: err
+        })
+      }
+      item.teachername = db_user.name;
+      if (selectiondata[j].finished == false) {
+        res_courselist[i] = item;
+        i++;
+      }
+      j++;
+      if (j == selectiondata.length) {
+        return res.send({
+          status: "success",
+          title: "UnfinishedCourseList",
+          courselist: res_courselist
+        })
+      }
+      else {
+        getCourse(res_courselist, i, selectiondata, j, res);
+      }
+    })
+  });
+}
 
 exports.getunfinished = function(req, res) {
   var user = req.session.user;
@@ -16,31 +76,7 @@ exports.getunfinished = function(req, res) {
         courselist: courselist
       });
     }
-    var data = selection.selectiondata;
-    for (var i = 0, j = 0; i < data.length; i++) {
-      if (data[i].finished == false) {
-        var course = {};
-        course.courseid = data[i].courseid;
-        course.classid = data[i].classid;
-        Course.findByCourseId(course.courseid, function(err, db_course) {
-          if (err) {
-            console.log(err);
-            return res.send({
-              status: "error",
-              errormessage: err
-            })
-          }
-          course.coursename = db_course.coursename;
-        })
-        courselist[j] = course;
-        j++;
-      }
-    }
-    return res.send({
-      status: "success",
-      title: "UnfinishedCourseList",
-      courselist: courselist
-    })
+    getCourse(courselist, 0, selection.selectiondata, 0, res)
   })
 }
 
