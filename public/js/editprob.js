@@ -39,7 +39,7 @@ $(function() {
     //提交，并下一题
     $('.content').on('tap', '.button-success', function(event) {
         var $prob = $('.prob:visible'),
-            probdesc = $prob.find('.prodesc').val(),
+            probdesc = $prob.find('.probdesc').val(),
             problemid = $prob.data('problemid'),
             $input = $prob.find('.item-input input'),
             $target = $(event.target),
