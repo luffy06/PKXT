@@ -13,7 +13,7 @@ function getUser(res_courselist, i, res) {
         errormessage: err
       });
     }
-    if (!user) {
+    if (user == null) {
       return res.send({
         status: "error",
         errormessage: loginid + " doesn't exist!"
@@ -182,6 +182,7 @@ exports.getproblemlist = function(req, res) {
         problemlist[i].choice[j]._id = undefined;
       }
     }
+    console.log("problemlist " + problemlist)
 
     return res.send({
       status: "success",
@@ -228,7 +229,9 @@ exports.editproblem = function(req, res) {
   if (req_classid == null)
     req_classid = req.query.classid;
 
-  var action = req.query.type;
+  var action = req.body.type;
+  if (action == null)
+    action = req.query.type;
   
   Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
@@ -239,8 +242,8 @@ exports.editproblem = function(req, res) {
     }
 
     // course doesn't exist
-    if (!course) {
-      console.log("middlewares/course.js: " + req_courseid + " doesn't exist!");
+    if (course == null) {
+      console.log(req_courseid + " doesn't exist!");
       return res.send({
         status: "error",
         errormessage: req_courseid + " doesn't exist!"
@@ -257,16 +260,19 @@ exports.editproblem = function(req, res) {
     }
 
     if (index == -1) {
-      console.log("middlewares/course.js: " + req_classid + " doesn't exist!");
+      console.log(req_classid + " doesn't exist!");
       return res.send({
         status: "error",
         errormessage: classid + "doesn't exist!"
       })
     }
 
+    var problem = req.body.prob;
+    if (problem == null)
+      problem = req.query.prob;
+
     // 1 add 2 update 3 delete
     if (action == 1) {
-      var problem = req.body.prob;
       var length = userdata[index].problem.length;
       problem.problemid = length;
       var choice = problem.choice;
@@ -275,8 +281,8 @@ exports.editproblem = function(req, res) {
       course.userdata[index].problem.splice(length - 1, 0, problem);
     }
     else if (action == 2) {
-      var problem = req.body.prob;
-      var problemid = req.query.problemid;
+      var problemid = problem.problemid;
+
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
@@ -290,10 +296,10 @@ exports.editproblem = function(req, res) {
           errormessage: problemid + " doesn't exist"
         })
       }
-      course.userdata[index].problem.splice(ind, 1, probelm);
+      course.userdata[index].problem.splice(ind, 1, problem);
     }
     else if (action == 3) {
-      var problemid = req.query.problemid;
+      var problemid = problem.problemid;
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
@@ -307,11 +313,12 @@ exports.editproblem = function(req, res) {
           errormessage: problemid + " doesn't exist"
         })
       }
-      course.userdata[index].problemid.splice(ind, 1);
+      course.userdata[index].problem.splice(ind, 1);
     }
     else {
       console.log("cannot distinguish action: " + action);
     }
+    console.log(course.userdata[index].problem);
     course.save(function(err, course) {
       if (err) {
         return res.send({
