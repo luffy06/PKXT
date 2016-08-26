@@ -15,7 +15,7 @@ $(function() {
                 $item = $this.parents('.item-content'),
                 obj = {
                     choiceid: $item.find('.choiceid').text(),
-                    choicedes: $(this).val()
+                    choicedesc: $(this).val()
                 };
             choice.push(obj);
         });

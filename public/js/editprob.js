@@ -39,7 +39,7 @@ $(function() {
     //提交，并下一题
     $('.content').on('tap', '.button-success', function(event) {
         var $prob = $('.prob:visible'),
-            probdesc = $prob.find('.probdesc').val(),
+            probdesc = $prob.find('.prodesc').val(),
             problemid = $prob.data('problemid'),
             $input = $prob.find('.item-input input'),
             $target = $(event.target),
@@ -50,7 +50,7 @@ $(function() {
                 $item = $this.parents('.item-content'),
                 obj = {
                     choiceid: $item.find('.choiceid').text(),
-                    choicedes: $(this).val()
+                    choicedesc: $(this).val()
                 };
             choice.push(obj);
         });
@@ -113,7 +113,7 @@ $(function() {
                 $item = $this.parents('.item-content'),
                 obj = {
                     choiceid: $item.find('.choiceid').text(),
-                    choicedes: $(this).val()
+                    choicedesc: $(this).val()
                 };
             choice.push(obj);
         });
