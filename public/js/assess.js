@@ -26,7 +26,7 @@ $(function() {
 
                 timer = startTimer($("span#time"), timerName);
             } else {
-                $.toast(json.status);
+                $.toast(json.errormessage);
             }
         }
     });
@@ -76,7 +76,7 @@ $(function() {
                     
 
                 } else {
-                    $.toast(json.status);
+                    $.toast(json.errormessage);
                 }
             }
         });

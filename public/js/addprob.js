@@ -38,7 +38,7 @@ $(function() {
                     $.toast(json.status);
                     routerTo('courselist.html');
                 } else {
-                    $.toast(json.status);
+                    $.toast(json.errormessage);
                 }
             }
         })

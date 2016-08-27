@@ -8,13 +8,18 @@ $(function() {
         dataType: 'json',
         success: function(json) {
             if (json.status === 'success') {
+                //不存在未完成的评课
+                if(!json.courselist.length){
+                    return;
+                }
+
                 var data = {
                         courselist: json.courselist
                     },
                     unfinishedHtml = template('unfinishedTemplate', data);
                 $('.result').append(unfinishedHtml);
             } else {
-                $.toast(json.status);
+                $.toast(json.errormessage);
             }
         }
     });

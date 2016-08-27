@@ -160,10 +160,14 @@ $(function() {
     //滑动效果
     $.fn.slideRight = function(callback) {
         this.addClass('slideOutRight animated');
-        setTimeout(function(){
-            callback();
-        },1000);
+        setTimeout(callback,1000);
     };
+
+
+    $.fn.slideLeft = function(callback){
+        this.addClass('slideOutLeft animated');
+        setTimeout(callback,1000);
+    }
 
 
 

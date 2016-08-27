@@ -1,6 +1,6 @@
 $(function() {
     $.ajax({
-        url: '/course/courseinfo',
+        url: '/course/courselist',
         type: 'post',
         data: {},
         dataType: 'json',
@@ -13,7 +13,7 @@ $(function() {
 
                 $('.result').append(courselistHtml);
             } else {
-                $.toast(json.status);
+                $.toast(json.errormessage);
             }
         }
     });

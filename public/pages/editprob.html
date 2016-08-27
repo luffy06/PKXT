@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="stylesheet" href="/css/sm.min.css">
-     <style>
+    <style>
     @-webkit-keyframes slideOutRight {
         0% {
             -webkit-transform: translate3d(0, 0, 0);
@@ -34,7 +34,32 @@
             transform: translate3d(100%, 0, 0)
         }
     }
-     .animated {
+    
+    @-webkit-keyframes slideOutLeft {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0)
+        }
+    }
+    
+    @keyframes slideOutLeft {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0)
+        }
+    }
+    
+    .animated {
         -webkit-animation-duration: 1s;
         animation-duration: 1s;
         -webkit-animation-fill-mode: both;
@@ -44,6 +69,11 @@
     .slideOutRight {
         -webkit-animation-name: slideOutRight;
         animation-name: slideOutRight
+    }
+    
+    .slideOutLeft {
+        -webkit-animation-name: slideOutLeft;
+        animation-name: slideOutLeft
     }
     </style>
 </head>
@@ -85,7 +115,7 @@
     <script type='text/javascript' src='/js/editprob.js' charset='utf-8'></script>
     <script id="editprobTemplate" type="text/html">
         {{each problist}}
-        <div class="prob"  style="display:none"  data-problemid="{{$value.problemid}}">
+        <div class="prob" style="display:none" data-problemid="{{$value.problemid}}">
             <div class="list-block">
                 <ul>
                     <li class="align-top">
@@ -101,11 +131,13 @@
                     </li>
                     <!-- Text inputs -->
                     {{each $value.choice}}
-                    <li>
+                    <li class="choice">
                         <div class="item-content">
                             <div class="item-media"><i class="icon icon-form-name"></i></div>
                             <div class="item-inner">
-                                <div class="item-title label">选项<span class="choiceid">{{$value.choiceid}}</span></div>
+                                <div class="item-title label">选项<span class="choiceid">{{$value.choiceid}}</span>
+                                    <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                                </div>
                                 <div class="item-input">
                                     <input type="text" placeholder="请输入选项{{$value.choiceid}}" value="{{$value.choicedesc}}">
                                 </div>
@@ -113,16 +145,36 @@
                         </div>
                     </li>
                     {{/each}}
+                    <li style="overflow: hidden;">
+                        <div style="width: 30%; margin:0.3rem auto;"><a href="javascript:;" class="button button-big button-fill button-addChoice">新增选项</a></div>
+                    </li>
                 </ul>
             </div>
             <div class="content-block">
                 <div class="row">
-                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger">删除</a></div>
-                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success">提交</a></div>
+                    <div class="col-33"><a href="javascript:;" class="button button-big button-fill button-prev">上一题</a></div>
+                    <div class="col-33"><a href="javascript:;" class="button button-big button-fill button-danger button-delete">删除</a></div>
+                    <div class="col-33"><a href="javascript:;" class="button button-big button-fill button-success button-submit">提交</a></div>
                 </div>
             </div>
         </div>
         {{/each}}
+    </script>
+    <script type="text/html" id="newChoiceTemplate">
+        <li class="choice">
+            <div class="item-content">
+                <div class="item-media"><i class="icon icon-form-name"></i></div>
+                <div class="item-inner">
+                    <div class="item-title label">选项<span class="choiceid">{{choiceid}}</span>
+                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                    </div>
+                    <div class="item-input">
+                        <input type="text" placeholder="请输入选项{{choiceid}}" value="">
+                        <span class="icon icon-remove" style="display:none;"></span>
+                    </div>
+                </div>
+            </div>
+        </li>
     </script>
 </body>
 
