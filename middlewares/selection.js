@@ -179,6 +179,8 @@ exports.savadata = function(req, res) {
 
       if (len == problem.length)
         finished = true;
+      console.log(len + " " + problem.length);
+      console.log("finish " + finished);
 
       selection.selectiondata[index].problem[ind].problemid = problemid;
       selection.selectiondata[index].problem[ind].choiceid = choiceid;
