@@ -34,11 +34,11 @@ function getUser(res_courselist, i, res) {
 }
 
 exports.getinfo = function(req, res) {
-  console.log("in getinfo")
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
   req_courseid = 1;
+  var userid = req.session.user.loginid;
 
   var default_course = new Course();
   default_course.courseid = "1";
@@ -117,12 +117,14 @@ exports.getinfo = function(req, res) {
     var res_courselist = new Array();
     
     for (var i = 0; i < course.userdata.length; i++) {
-      var item_course = {};
-      item_course.coursename = course.coursename;
-      item_course.courseid = course.courseid;
-      item_course.classid = course.userdata[i].classid;
-      item_course.teachername = course.userdata[i].userid;
-      res_courselist[i] = item_course;
+      if (course.userdata[i].userid == userid) {
+        var item_course = {};
+        item_course.coursename = course.coursename;
+        item_course.courseid = course.courseid;
+        item_course.classid = course.userdata[i].classid;
+        item_course.teachername = course.userdata[i].userid;
+        res_courselist[i] = item_course;
+      }
     }
     getUser(res_courselist, 0, res);
   });
@@ -272,15 +274,15 @@ exports.editproblem = function(req, res) {
       problem = req.query.prob;
 
     // 1 add 2 update 3 delete
-    if (action == 1) {
+    if (action == 1) { // add
       var length = userdata[index].problem.length;
       problem.problemid = length;
       var choice = problem.choice;
       for (var i = 0; i < choice.length; i++)
         problem.choice[i].choiceid = i + 1;
-      course.userdata[index].problem.splice(length - 1, 0, problem);
+      course.userdata[index].problem.splice(length, 0, problem);
     }
-    else if (action == 2) {
+    else if (action == 2) { // update
       var problemid = problem.problemid;
 
       var ind = -1;
@@ -298,7 +300,7 @@ exports.editproblem = function(req, res) {
       }
       course.userdata[index].problem.splice(ind, 1, problem);
     }
-    else if (action == 3) {
+    else if (action == 3) { // delete
       var problemid = problem.problemid;
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
