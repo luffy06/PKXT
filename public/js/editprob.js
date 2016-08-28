@@ -111,6 +111,17 @@ $(function() {
                 $target = $(event.target),
                 choice = [];
 
+            //删除问题后，对题号进行重新计算
+            var _caculateProbIndex = function() {
+                var $probs = $('.prob');
+
+                $probs.each(function(index, el) {
+                    $(el).find('.problemid').text(index + 1);
+                });
+
+            };
+
+
             $input.each(function(index) {
                 var $this = $(this),
                     $item = $this.parents('.item-content'),
@@ -137,10 +148,12 @@ $(function() {
                 dataType: 'json',
                 success: function(json) {
                     if (json.status === 'success') {
-                        var $listblock = $target.parents('.prob');
+                        var $listblock = $target.parents('.prob'),
+                            $nextlistblock = $listblock.next('.prob');
+
                         $.toast(json.status);
                         //最后一题
-                        if (!$listblock.next('.prob')[0]) {
+                        if (!$nextlistblock[0]) {
                             $.alert('点击确定返回课程信息列表', '编辑完成', function() {
                                 routerTo('courselist.html');
                             });
@@ -149,8 +162,10 @@ $(function() {
                         }
                         //切换到下一题
                         $listblock.slideRight(function() {
-                            $listblock.next('.prob').show();
+                            $nextlistblock.removeClass('slideOutLeft');
+                            $nextlistblock.show();
                             $listblock.remove();
+                            _caculateProbIndex(); //重新计数
                         });
                     } else {
                         $.toast(json.errormessage);
