@@ -22,27 +22,17 @@ function getUser(res_courselist, i, res) {
       });
     }
     res_courselist[i].teachername = user.name;
-    Selection.checkFinishedByUserIdAndCourseId(loginid, 
-      res_courselist[i].courseid, res_courselist[i].classid, 
-      function(err, db_data){
-      console.log("db_data " + db_data);
-      if (db_data != null && db_data.selectiondata.length != 0
-          && db_data.selectiondata[0].finished == true) {
-        res_courselist.splice(i, 1);
-        i = i - 1;
-      }
 
-      if (i == res_courselist.length - 1) {
-        return res.send({
-          status: "success",
-          title: "CoureseInfo",
-          courselist: res_courselist
-        })
-      }
-      else {
-        getUser(res_courselist, i + 1, res);
-      }
-    })
+    if (i == res_courselist.length - 1) {
+      return res.send({
+        status: "success",
+        title: "CoureseInfo",
+        courselist: res_courselist
+      })
+    }
+    else {
+      getUser(res_courselist, i + 1, res);
+    }
   });
 }
 
@@ -57,11 +47,11 @@ exports.getinfo = function(req, res) {
   var userid = req.session.user.loginid;
   var role = req.session.user.role;
 
-  var default_course = new Course();
-  default_course.courseid = "2";
-  default_course.coursename = "计算机组成原理";
+  // var default_course = new Course();
+  // default_course.courseid = "2";
+  // default_course.coursename = "计算机组成原理";
   
-  var userdata = new Array();
+  // var userdata = new Array();
   // var name = new Array();
   // name[0] = "root";
   // name[1] = "root";
@@ -92,28 +82,28 @@ exports.getinfo = function(req, res) {
   //   userdata[i].problem = new Array();
   //   userdata[i].problem = problem;
   // }
-  default_course.userdata = new Array();
-  default_course.userdata = userdata;
+  // default_course.userdata = new Array();
+  // default_course.userdata = userdata;
 
-  Course.findByCourseId(default_course.courseid, function(err, db_course) {
-    if (err) {
-      res.send({
-        status: "error",
-        errormessage: err
-      })
-    }
+  // Course.findByCourseId(default_course.courseid, function(err, db_course) {
+  //   if (err) {
+  //     res.send({
+  //       status: "error",
+  //       errormessage: err
+  //     })
+  //   }
 
-    if (db_course == null) {
-      default_course.save(function(err, res) {
-        if (err) {
-          res.send({
-            status: "error",
-            errormessage: err
-          })
-        }
-      })
-    }
-  });
+  //   if (db_course == null) {
+  //     default_course.save(function(err, res) {
+  //       if (err) {
+  //         res.send({
+  //           status: "error",
+  //           errormessage: err
+  //         })
+  //       }
+  //     })
+  //   }
+  // });
 
   Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
@@ -143,14 +133,52 @@ exports.getinfo = function(req, res) {
       res_courselist[i] = item_course;
     }
 
+    var message;
     if (res_courselist.length == 0) {
-      return res.send({
-        stauts: "error",
-        errormessage: "无课堂"
-      })
+      message = "无课堂";
+    }
+    else {
+      message = "该课程中的课堂均已评过，前往未完成页面查看未评完的课程";
     }
 
-    getUser(res_courselist, 0, res);
+    Selection.checkFinishedByUserIdAndCourseId(userid, 
+      req_courseid, function(err, db_data) {
+      if (err) {
+        console.log(err);
+        return res.send({
+          status: "error",
+          errormessage: err
+        })
+      }
+      
+      if (db_data != null) {
+        for (var i = 0; i < res_courselist.length;) {
+          var classid = res_courselist[i].classid;
+          var ind = -1;
+          for (var j = 0; j < db_data.selectiondata.length; j++) {
+            if (db_data.selectiondata[j].classid == classid) {
+              ind = j;
+              break;
+            }
+          }
+          if (ind != -1) {
+            res_courselist.splice(i, 1);
+          }
+          else {
+            i++;
+          }
+        }
+      }
+  
+      if (res_courselist.length == 0) {
+        return res.send({
+          stauts: "error",
+          errormessage: message
+        })
+      }
+
+      getUser(res_courselist, 0, res);
+    });
   });
 };
 
@@ -307,7 +335,6 @@ exports.editproblem = function(req, res) {
     // 1 add 2 update 3 delete
     if (action == 1) { // add
       var length = userdata[index].problem.length;
-      console.log(userdata[index].problem[length - 1].problemid);
       problem.problemid = userdata[index].problem[length - 1].problemid;
       problem.problemid++;
       var choice = problem.choice;
@@ -337,11 +364,9 @@ exports.editproblem = function(req, res) {
       var problemid = problem.problemid;
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
-        if (ind == -1 && userdata[index].problem[i].problemid == problemid) {
+        if (userdata[index].problem[i].problemid == problemid) {
           ind = i;
-        }
-        else if (ind != -1) {
-          userdata[index].problem[i].problemid--;
+          break;
         }
       }
       if (ind == -1) {
@@ -356,7 +381,6 @@ exports.editproblem = function(req, res) {
       console.log("cannot distinguish action: " + action);
     }
     course.userdata[index].problem.sort(sortProblem);
-    console.log(course.userdata[index].problem);
     course.save(function(err, course) {
       if (err) {
         return res.send({

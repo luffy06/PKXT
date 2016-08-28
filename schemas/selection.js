@@ -46,10 +46,10 @@ selectionSchema.statics = {
       .findOne({"userid": id})
       .exec(cb)
   },
-  checkFinishedByUserIdAndCourseId: function(userid, courseid, classid, cb) {
+  checkFinishedByUserIdAndCourseId: function(userid, courseid, cb) {
     return this
-      .findOne({"userid": userid, "selectiondata.courseid": courseid, 
-      "selectiondata.classid": classid}, {"selectiondata.finished":1, _id:0})
+      .findOne({"userid": userid, "selectiondata.courseid": courseid}, 
+        {"selectiondata": 1, _id: 0})
       .exec(cb)
   }
 }
