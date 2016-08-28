@@ -46,6 +46,10 @@ function getUser(res_courselist, i, res) {
   });
 }
 
+function sortProblem(a, b) {
+  return a.problemid - b.problemid;
+}
+
 exports.getinfo = function(req, res) {
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
@@ -53,11 +57,11 @@ exports.getinfo = function(req, res) {
   var userid = req.session.user.loginid;
   var role = req.session.user.role;
 
-  // var default_course = new Course();
-  // default_course.courseid = "1";
-  // default_course.coursename = "计算机网络";
+  var default_course = new Course();
+  default_course.courseid = "2";
+  default_course.coursename = "计算机组成原理";
   
-  // var userdata = new Array();
+  var userdata = new Array();
   // var name = new Array();
   // name[0] = "root";
   // name[1] = "root";
@@ -88,28 +92,28 @@ exports.getinfo = function(req, res) {
   //   userdata[i].problem = new Array();
   //   userdata[i].problem = problem;
   // }
-  // default_course.userdata = new Array();
-  // default_course.userdata = userdata;
+  default_course.userdata = new Array();
+  default_course.userdata = userdata;
 
-  // Course.findByCourseId("1", function(err, db_course) {
-  //   if (err) {
-  //     res.send({
-  //       status: "error",
-  //       errormessage: err
-  //     })
-  //   }
+  Course.findByCourseId(default_course.courseid, function(err, db_course) {
+    if (err) {
+      res.send({
+        status: "error",
+        errormessage: err
+      })
+    }
 
-  //   if (db_course == null) {
-  //     default_course.save(function(err, res) {
-  //       if (err) {
-  //         res.send({
-  //           status: "error",
-  //           errormessage: err
-  //         })
-  //       }
-  //     })
-  //   }
-  // });
+    if (db_course == null) {
+      default_course.save(function(err, res) {
+        if (err) {
+          res.send({
+            status: "error",
+            errormessage: err
+          })
+        }
+      })
+    }
+  });
 
   Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
@@ -204,7 +208,6 @@ exports.getproblemlist = function(req, res) {
         problemlist[i].choice[j]._id = undefined;
       }
     }
-    console.log("problemlist " + problemlist)
 
     return res.send({
       status: "success",
@@ -228,11 +231,19 @@ exports.getcourselist = function(req, res) {
 
     // get course list
     var res_courselist = new Array();
+    var j = 0;
     for (var i = 0; i < courselist.length; i++) {
       var course = courselist[i];
-      res_courselist[i] = {};
-      res_courselist[i].courseid = course.courseid;
-      res_courselist[i].coursename = course.coursename;
+      for (var k = 0; k < course.userdata.length; k++) {
+        if (course.userdata[k].userid == userid) {
+          var item_course = {};
+          item_course.courseid = course.courseid;
+          item_course.coursename = course.coursename;
+          item_course.classid = course.userdata[k].classid;
+          res_courselist[j] = item_course;
+          j = j + 1;
+        }
+      }
     }
 
     return res.send({
@@ -296,7 +307,9 @@ exports.editproblem = function(req, res) {
     // 1 add 2 update 3 delete
     if (action == 1) { // add
       var length = userdata[index].problem.length;
-      problem.problemid = length + 1;
+      console.log(userdata[index].problem[length - 1].problemid);
+      problem.problemid = userdata[index].problem[length - 1].problemid;
+      problem.problemid++;
       var choice = problem.choice;
       for (var i = 0; i < choice.length; i++)
         problem.choice[i].choiceid = i + 1;
@@ -324,9 +337,11 @@ exports.editproblem = function(req, res) {
       var problemid = problem.problemid;
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
-        if (userdata[index].problem[i].problemid == problemid) {
+        if (ind == -1 && userdata[index].problem[i].problemid == problemid) {
           ind = i;
-          break;
+        }
+        else if (ind != -1) {
+          userdata[index].problem[i].problemid--;
         }
       }
       if (ind == -1) {
@@ -340,6 +355,7 @@ exports.editproblem = function(req, res) {
     else {
       console.log("cannot distinguish action: " + action);
     }
+    course.userdata[index].problem.sort(sortProblem);
     console.log(course.userdata[index].problem);
     course.save(function(err, course) {
       if (err) {
