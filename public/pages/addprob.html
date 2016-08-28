@@ -26,7 +26,7 @@
             <div class="content prob">
                 <div class="list-block">
                     <ul>
-                    <li class="align-top">
+                        <li class="align-top">
                             <div class="item-content">
                                 <div class="item-media"><i class="icon icon-form-comment"></i></div>
                                 <div class="item-inner">
@@ -38,57 +38,66 @@
                             </div>
                         </li>
                         <!-- Text inputs -->
-                        <li>
+                        <li class="choice">
                             <div class="item-content">
                                 <div class="item-media"><i class="icon icon-form-name"></i></div>
                                 <div class="item-inner">
-                                    <div class="item-title label">选项<span class="choiceid">1</span></div>
+                                    <div class="item-title label">选项<span class="choiceid">1</span>
+                                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                                    </div>
                                     <div class="item-input">
                                         <input type="text" placeholder="请输入选项1">
                                     </div>
                                 </div>
                             </div>
                         </li>
-                        <li>
+                        <li class="choice">
                             <div class="item-content">
                                 <div class="item-media"><i class="icon icon-form-name"></i></div>
                                 <div class="item-inner">
-                                    <div class="item-title label">选项<span class="choiceid">2</span></div>
+                                    <div class="item-title label">选项<span class="choiceid">2</span>
+                                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                                    </div>
                                     <div class="item-input">
                                         <input type="text" placeholder="请输入选项2">
                                     </div>
                                 </div>
                             </div>
                         </li>
-                        <li>
+                        <li class="choice">
                             <div class="item-content">
                                 <div class="item-media"><i class="icon icon-form-name"></i></div>
                                 <div class="item-inner">
-                                    <div class="item-title label">选项<span class="choiceid">3</span></div>
+                                    <div class="item-title label">选项<span class="choiceid">3</span>
+                                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                                    </div>
                                     <div class="item-input">
                                         <input type="text" placeholder="请输入选项3">
                                     </div>
                                 </div>
                             </div>
                         </li>
-                        <li>
+                        <li class="choice">
                             <div class="item-content">
                                 <div class="item-media"><i class="icon icon-form-name"></i></div>
                                 <div class="item-inner">
-                                    <div class="item-title label">选项<span class="choiceid">4</span></div>
+                                    <div class="item-title label">选项<span class="choiceid">4</span>
+                                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                                    </div>
                                     <div class="item-input">
                                         <input type="text" placeholder="请输入选项4">
                                     </div>
                                 </div>
                             </div>
                         </li>
-                        
-                        
+                        <li style="overflow: hidden;">
+                            <div style="width: 30%; margin:0.3rem auto;"><a href="javascript:;" class="button button-big button-fill button-addChoice">新增选项</a></div>
+                        </li>
                     </ul>
                 </div>
                 <div class="content-block">
                     <div class="row">
-                        <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger">取消</a></div>
+                        <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger button-cancel">取消</a></div>
                         <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success">提交</a></div>
                     </div>
                 </div>
@@ -115,6 +124,22 @@
     <script type='text/javascript' src='/js/template.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/common.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/addprob.js' charset='utf-8'></script>
+     <script type="text/html" id="newChoiceTemplate">
+        <li class="choice">
+            <div class="item-content">
+                <div class="item-media"><i class="icon icon-form-name"></i></div>
+                <div class="item-inner">
+                    <div class="item-title label">选项<span class="choiceid">{{choiceid}}</span>
+                        <a href="javascript:;" class="button button-fill button-danger icon icon-remove reomveChoice"></a>
+                    </div>
+                    <div class="item-input">
+                        <input type="text" placeholder="请输入选项{{choiceid}}" value="">
+                        <span class="icon icon-remove" style="display:none;"></span>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </script>
 </body>
 
 </html>

@@ -106,22 +106,12 @@
             <div class="card-footer" class="questionChoices">
                 <div class="list-block">
                     <ul>
+                        {{each $value.choice}}
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[0].choiceid}}">{{$value.choice[0].choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choiceid}}">{{$value.choicedesc}}</a>
                             </p>
                         </li>
-                        <li>
-                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[1].choiceid}}">{{$value.choice[1].choicedesc}}</a>
-                            </p>
-                        </li>
-                        <li>
-                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[2].choiceid}}">{{$value.choice[2].choicedesc}}</a>
-                            </p>
-                        </li>
-                        <li>
-                            <p><a href="javascript:;" class="button  button-primary" data-choiceid="{{$value.choice[3].choiceid}}">{{$value.choice[3].choicedesc}}</a>
-                            </p>
-                        </li>
+                        {{/each}}
                     </ul>
                 </div>
             </div>
