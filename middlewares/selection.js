@@ -67,7 +67,7 @@ function getCourse(res_courselist, i, selectiondata, j, res) {
 exports.getunfinished = function(req, res) {
   var user = req.session.user;
 
-  Selection.fetchUnfinishedByUserId(user.loginid, function(err, selection) {
+  Selection.findByUserId(user.loginid, function(err, selection) {
     var courselist = new Array();
     if (selection == null || selection.selectiondata == null) {
       return res.send({

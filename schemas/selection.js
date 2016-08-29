@@ -36,17 +36,12 @@ selectionSchema.pre('save', function(next) {
 
 // statics method
 selectionSchema.statics = {
-  fetchUnfinishedByUserId: function(id, cb) {
-    return this
-      .findOne({"userid": id})
-      .exec(cb)
-  },
   findByUserId: function(id, cb) {
     return this
       .findOne({"userid": id})
       .exec(cb)
   },
-  checkFinishedByUserIdAndCourseId: function(userid, courseid, cb) {
+  findByUserIdAndCourseId: function(userid, courseid, cb) {
     return this
       .findOne({"userid": userid, "selectiondata.courseid": courseid}, 
         {"selectiondata": 1, _id: 0})

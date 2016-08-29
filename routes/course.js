@@ -5,8 +5,8 @@ var Course = express.Router();
 
 
 Course.post('/courseinfo', course.getinfo)
-      .post('/assesscourse', course.getproblemlist)
       .post('/courselist', course.getcourselist)
+      .post('/assesscourse', course.getproblemlist)
       .post('/problemlist', course.getproblemlist)
       .post('/editproblem', course.editproblem)
       .post('/unfinished', selection.getunfinished)

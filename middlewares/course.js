@@ -141,7 +141,7 @@ exports.getinfo = function(req, res) {
       message = "该课程中的课堂均已评过，前往未完成页面查看未评完的课程";
     }
 
-    Selection.checkFinishedByUserIdAndCourseId(userid, 
+    Selection.findByUserIdAndCourseId(userid, 
       req_courseid, function(err, db_data) {
       if (err) {
         console.log(err);
@@ -156,7 +156,8 @@ exports.getinfo = function(req, res) {
           var classid = res_courselist[i].classid;
           var ind = -1;
           for (var j = 0; j < db_data.selectiondata.length; j++) {
-            if (db_data.selectiondata[j].classid == classid) {
+            if (db_data.selectiondata[j].courseid == req_courseid &&
+              db_data.selectiondata[j].classid == classid) {
               ind = j;
               break;
             }
@@ -189,8 +190,11 @@ exports.getproblemlist = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
-  // req_courseid = 1;
-  // req_classid = 1;
+  var edit = req.body.edit;
+  if (edit == null)
+    edit = req.query.edit;
+  var userid = req.session.user.loginid;
+
 
   // code repeat too much
   // too bad
@@ -203,7 +207,7 @@ exports.getproblemlist = function(req, res) {
     }
 
     // course doesn't exist
-    if (!course) {
+    if (course == null) {
       console.log(req_courseid + " doesn't exist!");
       return res.send({
         status: "error",
@@ -236,12 +240,71 @@ exports.getproblemlist = function(req, res) {
         problemlist[i].choice[j]._id = undefined;
       }
     }
+    edit = 0;
 
-    return res.send({
-      status: "success",
-      title: "ProblemList",
-      problist: problemlist
-    });
+    if (edit == 0) {
+      Selection.findByUserIdAndCourseId(userid, req_courseid, 
+        function(err, db_data) {
+        if (err) {
+          return res.send({
+            status: "error",
+            errormessage: err
+          });
+        }
+        var user_data = null;
+        for (var i = 0; i < db_data.selectiondata.length; i++) {
+          if (db_data.selectiondata[i].courseid == req_courseid &&
+            db_data.selectiondata[i].classid == req_classid) {
+            user_data = db_data.selectiondata[i];
+            break;
+          }
+        }
+        if (user_data != null) {
+          if (user_data.finished == true) {
+            return res.send({
+              status: "error",
+              errormessage: "这门课你已经评过了"
+            })
+          }
+          else {
+            problemlist.sort(sortProblem);
+            user_data.problem.sort(sortProblem);
+            var i = 0, j = 0;
+            while (i < problemlist.length && j < user_data.problem.length) {
+              console.log(problemlist[i].problemid);
+              if (problemlist[i].problemid == user_data.problem[j].problemid) {
+                problemlist.splice(i, 1);
+                // i++;
+                j++;
+              }
+              else if (problemlist[i].problemid < user_data.problem[j].problemid) {
+                i++;
+              }
+              else {
+                j++;
+              }
+            }
+            return res.send({
+              status: "success",
+              title: "ProblemList",
+              problist: problemlist
+            });
+          }
+        }
+        return res.send({
+          status: "success",
+          title: "ProblemList",
+          problist: problemlist
+        });
+      })
+    }
+    else {
+      return res.send({
+        status: "success",
+        title: "ProblemList",
+        problist: problemlist
+      });
+    }
   });
 }
 
@@ -376,11 +439,13 @@ exports.editproblem = function(req, res) {
         })
       }
       course.userdata[index].problem.splice(ind, 1);
+      for (var i = 0; i < course.userdata[index].problem.length; i++) {
+        course.userdata[index].problem[i].problemid = i + 1;
+      }
     }
     else {
       console.log("cannot distinguish action: " + action);
     }
-    course.userdata[index].problem.sort(sortProblem);
     course.save(function(err, course) {
       if (err) {
         return res.send({
