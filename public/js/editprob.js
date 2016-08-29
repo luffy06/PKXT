@@ -10,8 +10,9 @@ $(function() {
         url: '/course/problemlist',
         type: 'post',
         data: {
-            courseid: courseid,
-            classid: classid
+            "courseid": courseid,
+            "classid": classid,
+            "edit":1
         },
         dataType: 'json',
         success: function(json) {

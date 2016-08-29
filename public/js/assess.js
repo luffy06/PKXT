@@ -10,14 +10,16 @@ $(function() {
         type: 'post',
         data: {
             "courseid": courseid,
-            "classid": classid
+            "classid": classid,
+            "edit":0
         },
         dataType: 'json',
         success: function(json) {
             if (json.status === 'success') {
                 $('.problemList').empty();
                 var data = {
-                        problist: json.problist
+                        problist: json.problist,
+                        startpid: json.startpid
                     },
                     probHtml = template('problemTemplate', data);
 

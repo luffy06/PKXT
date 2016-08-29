@@ -99,7 +99,7 @@
     <script id="problemTemplate" type="text/html">
         {{each problist}}
         <div class="card" style="display: none">
-            <div class="card-header">问题{{$index+1}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
+            <div class="card-header">问题{{$startpid + $index}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
             <div class="card-content">
                 <div class="card-content-inner" class='questionContent'>{{$value.description}}</div>
             </div>
