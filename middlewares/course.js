@@ -94,7 +94,7 @@ exports.getinfo = function(req, res) {
     }
 
     if (db_course == null) {
-      default_course.save(function(err, res) {
+      default_course.save(function(err, rr) {
         if (err) {
           res.send({
             status: "error",
@@ -240,7 +240,7 @@ exports.getproblemlist = function(req, res) {
         problemlist[i].choice[j]._id = undefined;
       }
     }
-    edit = 0;
+    edit = 1;
 
     if (edit == 0) {
       Selection.findByUserIdAndCourseId(userid, req_courseid, 
@@ -251,44 +251,47 @@ exports.getproblemlist = function(req, res) {
             errormessage: err
           });
         }
-        var user_data = null;
-        for (var i = 0; i < db_data.selectiondata.length; i++) {
-          if (db_data.selectiondata[i].courseid == req_courseid &&
-            db_data.selectiondata[i].classid == req_classid) {
-            user_data = db_data.selectiondata[i];
-            break;
-          }
-        }
-        if (user_data != null) {
-          if (user_data.finished == true) {
-            return res.send({
-              status: "error",
-              errormessage: "这门课你已经评过了"
-            })
-          }
-          else {
-            problemlist.sort(sortProblem);
-            user_data.problem.sort(sortProblem);
-            var i = 0, j = 0;
-            while (i < problemlist.length && j < user_data.problem.length) {
-              console.log(problemlist[i].problemid);
-              if (problemlist[i].problemid == user_data.problem[j].problemid) {
-                problemlist.splice(i, 1);
-                // i++;
-                j++;
-              }
-              else if (problemlist[i].problemid < user_data.problem[j].problemid) {
-                i++;
-              }
-              else {
-                j++;
-              }
+
+        if (db_data != null) {
+          var user_data = null;
+          for (var i = 0; i < db_data.selectiondata.length; i++) {
+            if (db_data.selectiondata[i].courseid == req_courseid &&
+              db_data.selectiondata[i].classid == req_classid) {
+              user_data = db_data.selectiondata[i];
+              break;
             }
-            return res.send({
-              status: "success",
-              title: "ProblemList",
-              problist: problemlist
-            });
+          }
+          if (user_data != null) {
+            if (user_data.finished == true) {
+              return res.send({
+                status: "error",
+                errormessage: "这门课你已经评过了"
+              })
+            }
+            else {
+              problemlist.sort(sortProblem);
+              user_data.problem.sort(sortProblem);
+              var i = 0, j = 0;
+              while (i < problemlist.length && j < user_data.problem.length) {
+                console.log(problemlist[i].problemid);
+                if (problemlist[i].problemid == user_data.problem[j].problemid) {
+                  problemlist.splice(i, 1);
+                  // i++;
+                  j++;
+                }
+                else if (problemlist[i].problemid < user_data.problem[j].problemid) {
+                  i++;
+                }
+                else {
+                  j++;
+                }
+              }
+              return res.send({
+                status: "success",
+                title: "ProblemList",
+                problist: problemlist
+              });
+            }
           }
         }
         return res.send({
