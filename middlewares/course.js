@@ -442,6 +442,7 @@ exports.editproblem = function(req, res) {
         })
       }
       course.userdata[index].problem.splice(ind, 1);
+      // low efficiency
       for (var i = 0; i < course.userdata[index].problem.length; i++) {
         course.userdata[index].problem[i].problemid = i + 1;
       }
