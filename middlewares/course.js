@@ -240,8 +240,8 @@ exports.getproblemlist = function(req, res) {
         problemlist[i].choice[j]._id = undefined;
       }
     }
-    edit = 1;
 
+    var pid = 1;
     if (edit == 0) {
       Selection.findByUserIdAndCourseId(userid, req_courseid, 
         function(err, db_data) {
@@ -271,11 +271,11 @@ exports.getproblemlist = function(req, res) {
             else {
               problemlist.sort(sortProblem);
               user_data.problem.sort(sortProblem);
-              var i = 0, j = 0;
+              var i = 0, j = 0, del = 0;
               while (i < problemlist.length && j < user_data.problem.length) {
-                console.log(problemlist[i].problemid);
                 if (problemlist[i].problemid == user_data.problem[j].problemid) {
                   problemlist.splice(i, 1);
+                  pid++;
                   // i++;
                   j++;
                 }
@@ -289,7 +289,8 @@ exports.getproblemlist = function(req, res) {
               return res.send({
                 status: "success",
                 title: "ProblemList",
-                problist: problemlist
+                problist: problemlist,
+                startpid: pid
               });
             }
           }
@@ -297,7 +298,8 @@ exports.getproblemlist = function(req, res) {
         return res.send({
           status: "success",
           title: "ProblemList",
-          problist: problemlist
+          problist: problemlist,
+          startpid: pid
         });
       })
     }
@@ -305,7 +307,8 @@ exports.getproblemlist = function(req, res) {
       return res.send({
         status: "success",
         title: "ProblemList",
-        problist: problemlist
+        problist: problemlist,
+        startpid: pid
       });
     }
   });
@@ -442,10 +445,10 @@ exports.editproblem = function(req, res) {
         })
       }
       course.userdata[index].problem.splice(ind, 1);
-      // low efficiency
-      for (var i = 0; i < course.userdata[index].problem.length; i++) {
-        course.userdata[index].problem[i].problemid = i + 1;
-      }
+      // rearrange problemid & low efficiency
+      // for (var i = 0; i < course.userdata[index].problem.length; i++) {
+      //   course.userdata[index].problem[i].problemid = i + 1;
+      // }
     }
     else {
       console.log("cannot distinguish action: " + action);
