@@ -103,7 +103,6 @@ exports.login = function(req, res) {
         console.log(db_user.role);
         return res.send({
           status: "success",
-          title: "User",
           role: db_user.role
         });
       }

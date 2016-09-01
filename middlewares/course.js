@@ -6,6 +6,15 @@ var User = mongoose.model('user', UserSchema);
 var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
 
+function sortProblem(a, b) {
+  return a.problemid - b.problemid;
+}
+
+function sortChoice(a, b) {
+  return a.choiceid - b.choiceid;
+}
+
+
 function getUser(res_courselist, i, res) {
   var loginid = res_courselist[i].teachername;
   User.findOneById(loginid, function(err, user) {
@@ -36,8 +45,56 @@ function getUser(res_courselist, i, res) {
   });
 }
 
-function sortProblem(a, b) {
-  return a.problemid - b.problemid;
+function getProblem(db_prob, j, problist, commentlist, i, res) {
+  if (i == problist.length) {
+    return res.send({
+      status: "success",
+      problist: problist,
+      commentlist, commentlist
+    });
+  }
+  else if (j == db_prob.length) {
+    return res.send({
+      stauts: "error",
+      errormessage: "部分问题号不存在"
+    })
+  }
+
+  var problemid = problist[i].problemid;
+  var db_problemid = db_prob[j].problemid;
+  
+  if (db_problemid == problemid) {
+    problist[i].description = db_prob[j].description;
+
+    db_prob[j].choice.sort(sortChoice);
+    problist[i].choice.sort(sortChoice);
+
+    for (var k = 0, g = 0; k < db_prob[j].choice.length && g < problist[i].choice.length; ) {
+      if (db_prob[j].choice[k].choiceid == problist[i].choice[g].choiceid) {
+        problist[i].choice[g].choicedesc = db_prob[j].choice[k].choicedesc;
+        g++;
+        k++;
+      }
+      else if (db_prob[j].choice[k].choiceid > problist[i].choice[g].choiceid) {
+        return res.send({
+          status: "error",
+          errormessage: "问题 " + problemid + " 中选项号" + problist[i].choice[g].choiceid + " 不存在"
+        })
+      }
+      else {
+        k++;
+      }
+    }
+
+    i = i + 1;
+  }
+  else if (db_problemid > problemid) {
+    return res.send({
+      status: "error",
+      errormessage: "问题号 " + problemid + " 不存在"
+    })
+  }
+  getProblem(db_prob, j + 1, problist, commentlist, i, res);
 }
 
 exports.getinfo = function(req, res) {
@@ -358,7 +415,6 @@ exports.editproblem = function(req, res) {
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
-
   var action = req.body.type;
   if (action == null)
     action = req.query.type;
@@ -465,4 +521,124 @@ exports.editproblem = function(req, res) {
       })
     });
   });
+}
+
+exports.getsummary = function(req, res) {
+  var req_courseid = req.body.courseid;
+  if (req_courseid == null)
+    req_courseid = req.query.courseid;
+  var req_classid = req.body.classid;
+  if (req_classid == null)
+    req_classid = req.query.classid;
+  var problist = new Array();
+  var commentlist = new Array();
+  var data = new Array();
+  Selection.findByCourseIdAndClassId(req_courseid, req_classid, function(err, db_data) {
+    if (err) {
+      return res.send({
+        status: "error",
+        errormessage: err
+      })
+    }
+
+    if (db_data == null) {
+      return res.send({
+        status: "error",
+        errormessage: "还未有学生评课"
+      })
+    }
+    for (var i = 0, k = 0; i < db_data.length; i++) {
+      for (var j = 0; j < db_data[i].selectiondata.length; j++) {
+        if (db_data[i].selectiondata[j].courseid == req_courseid && 
+          db_data[i].selectiondata[j].classid == req_classid) {
+          data[k++] = db_data[i].selectiondata[j];
+        }
+      }
+    }
+
+    var totalprob = 0;
+    for (var i = 0; i < data.length; i++) {
+      commentlist[i] = data[i].comment;
+      var problem = data[i].problem;
+      problem.sort(sortProblem);
+      for (var j = 0; j < problem.length; j++) {
+        var index = -1;
+        if (problist.length > 0) {
+          for (var k = 0; k < problist.lenght; k++) {
+            if (problist[k].problemid == problem[j].problemid) {
+              index = k;
+              break;
+            }
+          }
+        }
+
+        if (index == -1) {
+          problist[totalprob] = {};
+          problist[totalprob].problemid = problem[j].problemid;
+          problist[totalprob].choice = new Array();
+          index = totalprob;
+          totalprob = totalprob + 1;
+        }
+
+        var chindex = -1;
+        for (var k = 0; k < problist[index].choice.length; k++) {
+          if (problist[index].choice[k].choiceid == problem[j].choiceid)
+            chindex = k;
+        }
+
+        if (chindex == -1) {
+          var length = problist[index].choice.length;
+          problist[index].choice[length].choiceid = problem[j].choiceid;
+          problist[index].choice[length].percent = 1;
+          problist[index].choice[length].avgtimecost = problem[j].timecost;
+        }
+        else {
+          problist[index].choice[chindex].percent++;
+          problist[index].choice[length].avgtimecost += problem[j].timecost;
+        }
+      }
+    }
+
+    for (var i = 0; i < problist.length; i++) {
+      var sum = 0;
+      for (var j = 0; j < problist[i].choice.length; j++) {
+        problist[i].choice[j].avgtimecost /= (1.0 * problist[i].choice[j].percent);
+        sum += problist[i].choice[j].percent;
+      }
+      for (var j = 0; j < problist[i].choice.length; j++) {
+        problist[i].choice[j].percent /= (1.0 * sum);
+      }
+    }
+
+    Course.findByCourseId(req_courseid, function(err, db_course) {
+      if (err) {
+        return res.send({
+          status: "error",
+          errormessage: err
+        })
+      }
+
+      var index = -1;
+      for (var i = 0; i < db_course.userdata.length; i++) {
+        if (req_classid == db_course.userdata[i].classid) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index == -1) {
+        console.log(req_classid + " doesn't exist!");
+        return res.send({
+          status: "error",
+          errormessage: req_classid + " doesn't exist!"
+        })
+      }
+
+      var db_prob = db_course.userdata[index].problem;
+      db_prob.sort(sortProblem);
+      problist.sort(sortProblem);
+
+      getProblem(db_prob, 0, problist, commentlist, 0, res);      
+    }) 
+  })
 }

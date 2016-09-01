@@ -8,8 +8,10 @@ var selectionSchema = new mongoose.Schema({
     finished: Boolean,
     problem: [{
       problemid: String,
-      choiceid: String
-    }]
+      choiceid: String,
+      timecost: Number
+    }],
+    comment: String
   }],
   meta: {
     createAt: {
@@ -45,6 +47,12 @@ selectionSchema.statics = {
     return this
       .findOne({"userid": userid, "selectiondata.courseid": courseid}, 
         {"selectiondata": 1, _id: 0})
+      .exec(cb)
+  },
+  findByCourseIdAndClassId: function(courseid, classid, cb) {
+    return this
+      .find({"selectiondata.courseid": courseid, "selectiondata.classid": classid, 
+        "selectiondata.finished": true}, {"selectiondata": 1, _id: 0})
       .exec(cb)
   }
 }

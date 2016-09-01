@@ -126,66 +126,65 @@ exports.savadata = function(req, res) {
     var problem = selection.selectiondata[index].problem;
     
     var problemid = req.body.problemid;
-    if (req.body.problemid == null)
+    if (problemid == null)
       problemid = req.query.problemid;
     var choiceid = req.body.choiceid;
-    if (req.body.choiceid == null)
+    if (choiceid == null)
       choiceid = req.query.choiceid;
+    var comment = req.body.comment;
+    if (comment == null)
+      comment = req.query.comment;
 
-    var ind = -1;
-    var finished = false;
+    if (comment == null) {
+      var ind = -1;
 
-    for (var i = 0; i < problem.length; i++) {
-      if (problem[i].problemid == problemid) {
-        ind = i;
-      }
-    }
-
-    if (ind == -1) {
-      ind = problem.length;
-      selection.selectiondata[index].problem[ind] = {};
-    }
-
-    Course.findByCourseId(courseid, function(err, db_course) {
-      if (err) {
-        return res.send({
-          status: "error", 
-          errormessage: err
-        })
-      }
-
-      if (db_course == null) {
-        return res.send({
-          status: "error", 
-          errormessage: courseid + " doesn't exist!"
-        })
-      }
-
-      var len = -1;
-      for (var i = 0; i < db_course.userdata.length; i++) {
-        if (db_course.userdata[i].classid == classid) {
-          len = db_course.userdata[i].problem.length;
-          break;
+      for (var i = 0; i < problem.length; i++) {
+        if (problem[i].problemid == problemid) {
+          ind = i;
         }
       }
 
-      if (len == -1) {
-        console.log(classid + " doesn't exist!");
-        return res.send({
-          status: "error",
-          errormessage: classid + " doesn't exist!"
-        })
+      if (ind == -1) {
+        ind = problem.length;
+        selection.selectiondata[index].problem[ind] = {};
       }
 
-      if (len == problem.length)
-        finished = true;
-      console.log(len + " " + problem.length);
-      console.log("finish " + finished);
+      Course.findByCourseId(courseid, function(err, db_course) {
+        if (err) {
+          return res.send({
+            status: "error", 
+            errormessage: err
+          })
+        }
 
-      selection.selectiondata[index].problem[ind].problemid = problemid;
-      selection.selectiondata[index].problem[ind].choiceid = choiceid;
-      selection.selectiondata[index].finished = finished;
+        if (db_course == null) {
+          return res.send({
+            status: "error", 
+            errormessage: courseid + " doesn't exist!"
+          })
+        }
 
+        selection.selectiondata[index].problem[ind].problemid = problemid;
+        selection.selectiondata[index].problem[ind].choiceid = choiceid;
+        selection.selectiondata[index].finished = false;
+
+        selection.save(function(err, _selection) {
+          if (err) {
+            res.send({
+              status: "error",
+              errormessage: err
+            })
+          }
+        })
+        return res.send({
+          status: "success"
+        })
+      })
+    }
+    else {
+      selection.selectiondata[index].comment = comment;
+      selection.selectiondata[index].finished = true;
+      
       selection.save(function(err, _selection) {
         if (err) {
           res.send({
@@ -197,6 +196,6 @@ exports.savadata = function(req, res) {
       return res.send({
         status: "success"
       })
-    })
+    }
   })
 }

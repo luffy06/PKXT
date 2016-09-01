@@ -8,6 +8,7 @@ Course.post('/courseinfo', course.getinfo)
       .post('/courselist', course.getcourselist)
       .post('/assesscourse', course.getproblemlist)
       .post('/problemlist', course.getproblemlist)
+      .post('/getsummary', course.getsummary)
       .post('/editproblem', course.editproblem)
       .post('/unfinished', selection.getunfinished)
       .post('/savedata', selection.savadata);
