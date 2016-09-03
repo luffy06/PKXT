@@ -590,21 +590,20 @@ exports.getsummary = function(req, res) {
           var length = problist[index].choice.length;
           problist[index].choice[length].choiceid = problem[j].choiceid;
           problist[index].choice[length].percent = 1;
-          problist[index].choice[length].avgtimecost = problem[j].timecost;
+          problist[index].avgtimecost = problem[j].timecost;
         }
         else {
           problist[index].choice[chindex].percent++;
-          problist[index].choice[length].avgtimecost += problem[j].timecost;
+          problist[index].avgtimecost += problem[j].timecost;
         }
       }
     }
 
     for (var i = 0; i < problist.length; i++) {
       var sum = 0;
-      for (var j = 0; j < problist[i].choice.length; j++) {
-        problist[i].choice[j].avgtimecost /= (1.0 * problist[i].choice[j].percent);
+      for (var j = 0; j < problist[i].choice.length; j++)
         sum += problist[i].choice[j].percent;
-      }
+      problist[i].avgtimecost /= (1.0 * sum);
       for (var j = 0; j < problist[i].choice.length; j++) {
         problist[i].choice[j].percent /= (1.0 * sum);
       }

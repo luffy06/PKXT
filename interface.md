@@ -316,7 +316,9 @@ returnData: {
 
 ​			percent
 
-​		}]				
+​		}],
+
+​		avgtimecost
 
 ​	}],
 
