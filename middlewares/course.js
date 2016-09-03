@@ -524,6 +524,7 @@ exports.editproblem = function(req, res) {
 }
 
 exports.getsummary = function(req, res) {
+  console.log("in getsummary");
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
@@ -547,6 +548,8 @@ exports.getsummary = function(req, res) {
         errormessage: "还未有学生评课"
       })
     }
+
+    console.log("db_data not null");
     for (var i = 0, k = 0; i < db_data.length; i++) {
       for (var j = 0; j < db_data[i].selectiondata.length; j++) {
         if (db_data[i].selectiondata[j].courseid == req_courseid && 
@@ -588,13 +591,15 @@ exports.getsummary = function(req, res) {
 
         if (chindex == -1) {
           var length = problist[index].choice.length;
+          problist[index].choice[length] = {};
           problist[index].choice[length].choiceid = problem[j].choiceid;
           problist[index].choice[length].percent = 1;
-          problist[index].avgtimecost = problem[j].timecost;
+          problist[index].avgtimecost = problem[j].costtime;
+          console.log(problem[j].costtime);
         }
         else {
           problist[index].choice[chindex].percent++;
-          problist[index].avgtimecost += problem[j].timecost;
+          problist[index].avgtimecost += problem[j].costtime;
         }
       }
     }
@@ -609,11 +614,21 @@ exports.getsummary = function(req, res) {
       }
     }
 
+    console.log("problist:");
+    console.log(problist);
+
     Course.findByCourseId(req_courseid, function(err, db_course) {
       if (err) {
         return res.send({
           status: "error",
           errormessage: err
+        })
+      }
+
+      if (db_course == null) {
+        return res.send({
+          stauts: "error",
+          errormessage: req_courseid + " 不存在"
         })
       }
 

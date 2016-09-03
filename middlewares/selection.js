@@ -131,6 +131,9 @@ exports.savadata = function(req, res) {
     var choiceid = req.body.choiceid;
     if (choiceid == null)
       choiceid = req.query.choiceid;
+    var costtime = req.body.costtime;
+    if (costtime == null)
+      costtime = req.query.costtime;
     var comment = req.body.comment;
     if (comment == null)
       comment = req.query.comment;
@@ -166,6 +169,7 @@ exports.savadata = function(req, res) {
 
         selection.selectiondata[index].problem[ind].problemid = problemid;
         selection.selectiondata[index].problem[ind].choiceid = choiceid;
+        selection.selectiondata[index].problem[ind].costtime = costtime;
         selection.selectiondata[index].finished = false;
 
         selection.save(function(err, _selection) {

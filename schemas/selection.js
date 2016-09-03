@@ -9,7 +9,7 @@ var selectionSchema = new mongoose.Schema({
     problem: [{
       problemid: String,
       choiceid: String,
-      timecost: Number
+      costtime: Number
     }],
     comment: String
   }],
