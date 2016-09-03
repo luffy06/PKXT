@@ -44,7 +44,20 @@ $(function() {
         });
     });
 
-    
+    //课程总结
+    $('.result').on('tap', '.resultBtn', function(event) {
+        var $target = $(event.target),
+            $parentCard = $target.parents('.card'),
+            courseid = $parentCard.find('.courseid').text(),
+            classid = $parentCard.find('.classid').text();
+
+        routerTo('resultlist.html', {
+            courseid: courseid,
+            classid: classid
+        });
+    });
+
+
     //末尾一定要添加，否则组件bug
     //添加在所有pageInit事件后
     $.init();

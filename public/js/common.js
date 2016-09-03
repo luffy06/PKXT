@@ -57,31 +57,31 @@ function returnStuOrTea() {
 
 
 //自动计时
-function startTimer($time, timerName) {
+function startTimer($time) {
     //自动计时
-    var time = parseInt(window.localStorage.getItem(timerName), 10) || 0,
+    var time = 0,
         hour,
         min,
         sec,
         formatTime,
         timer;
+
     timer = setInterval(function() {
         time += 1;
-        window.localStorage.setItem(timerName, time);
         hour = Math.floor(time / 3600),
             min = Math.floor((time - hour * 3600) / 60),
             sec = time - hour * 3600 - min * 60,
             formatTime = hour + 'h ' + min + 'm ' + sec + 's';
         $time.text(formatTime);
+        $time.data('seconds', time);
     }, 1000);
 
     return timer;
 }
 
 //结束计时
-function stopTimer(timer, timerName) {
+function stopTimer(timer) {
     clearInterval(timer);
-    window.localStorage.removeItem(timerName);
 }
 
 
@@ -125,7 +125,6 @@ $(function() {
         routerTo('scan.html');
     });
 
-
     //未完成unfinished.html
     $('.unfinishedBtn').on('tap', function() {
         routerTo('unfinished.html');
@@ -135,8 +134,7 @@ $(function() {
     $('.courselistBtn').on('tap', function() {
         routerTo('courselist.html');
     });
-
-
+ 
     //登出
     $('.logoutBtn').on('tap', function() {
         $.ajax({
@@ -147,7 +145,7 @@ $(function() {
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast('登出成功');
-                    removeStorage('ccnu_user');
+                    window.localStorage.clear();//删除所有保存的信息
                     routerTo('index.html');
                 } else {
                     $.toast(json.errormessage);

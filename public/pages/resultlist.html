@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>评课</title>
+    <title>评价</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -58,20 +58,10 @@
             <header class="bar bar-nav">
                 <a class="icon icon-me pull-left open-panel"></a>
                 <a class="icon icon-code pull-right"></a>
-                <h1 class="title">评课</h1>
+                <h1 class="title">统计结果</h1>
             </header>
             <!-- 这里是页面内容区 -->
             <div class="content">
-                <div class="row">
-                    <!-- <div class="col-50">
-                        <span>得分：</span>
-                        <span id='score'>0</span>
-                    </div> -->
-                    <div class="col-50">
-                        <span>耗时：</span>
-                        <span id="time" data-seconds="0">0</span>
-                    </div>
-                </div>
                 <div class="content-block problemList">
                 </div>
             </div>
@@ -88,6 +78,7 @@
                 <p><a class="scandBtn" href="javascript:;">搜索课程</a></p>
                 <p><a class="unfinishedBtn" href="javascript:;">未完成评课</a></p>
                 <p><a class="courselistBtn" style="display: none" href="javascript:;">课程信息</a></p>
+                <p><a class="resultlistBtn" style="display: none" href="javascript:;">统计结果</a></p>
                 <p><a class="logoutBtn" href="javascript:;">退出</a></p>
             </div>
         </div>
@@ -96,11 +87,13 @@
     <script type='text/javascript' src='/js/sm.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/template.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='/js/common.js' charset='utf-8'></script>
-    <script type='text/javascript' src='/js/assess.js' charset='utf-8'></script>
+    <script type='text/javascript' src='/js/resultlist.js' charset='utf-8'></script>
     <script id="problemTemplate" type="text/html">
         {{each problist}}
         <div class="card" style="display: none">
-            <div class="card-header">问题{{startpid + $index}} <span class="problemid" style="display:none">{{$value.problemid}}</span></div>
+            <div class="card-header">问题{{$index+1}}
+                <p class="avgtimecost">平均用时：{{$value.​avgtimecost}}</p>
+            </div>
             <div class="card-content">
                 <div class="card-content-inner" class='questionContent'>{{$value.description}}</div>
             </div>
@@ -109,7 +102,7 @@
                     <ul>
                         {{each $value.choice}}
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary button-choice" data-choiceid="{{$value.choiceid}}">{{$value.choicedesc}}</a>
+                            <p><a href="javascript:;" class="button  button-primary button-choice">{{$value.choicedesc}} ：{{$value.​percent}} %</a>
                             </p>
                         </li>
                         {{/each}}
@@ -119,27 +112,14 @@
         </div>
         {{/each}}
         <div class="commentDiv" style="display:none;">
-            <div class="list-block">
-                <ul>
-                    <li class="align-top">
-                        <div class="item-content">
-                            <div class="item-media"><i class="icon icon-form-comment"></i></div>
-                            <div class="item-inner">
-                                <div class="item-title label">意见：</div>
-                                <div class="item-input" >
-                                    <textarea class="comment" style="height: 10rem;" placeholder="写下你的意见"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="content-block">
-                <div class="row">
-                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger button-reset">重置</a></div>
-                    <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success button-submit">提交</a></div>
+            {{each commentlist}}
+            <div class="card">
+                <div class="card-header">意见{{$index+1}}</div>
+                <div class="card-content">
+                    <div class="card-content-inner" class='questionContent'>{{$value}}</div>
                 </div>
             </div>
+            {{/each}}
         </div>
     </script>
 </body>
