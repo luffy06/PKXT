@@ -85,7 +85,6 @@ function getProblem(db_prob, j, problist, commentlist, i, res) {
         k++;
       }
     }
-
     i = i + 1;
   }
   else if (db_problemid > problemid) {
@@ -559,6 +558,7 @@ exports.getsummary = function(req, res) {
       }
     }
 
+
     var totalprob = 0;
     for (var i = 0; i < data.length; i++) {
       commentlist[i] = data[i].comment;
@@ -567,13 +567,14 @@ exports.getsummary = function(req, res) {
       for (var j = 0; j < problem.length; j++) {
         var index = -1;
         if (problist.length > 0) {
-          for (var k = 0; k < problist.lenght; k++) {
+          for (var k = 0; k < problist.length; k++) {
             if (problist[k].problemid == problem[j].problemid) {
               index = k;
               break;
             }
           }
         }
+
 
         if (index == -1) {
           problist[totalprob] = {};
@@ -595,7 +596,6 @@ exports.getsummary = function(req, res) {
           problist[index].choice[length].choiceid = problem[j].choiceid;
           problist[index].choice[length].percent = 1.0;
           problist[index].avgtimecost = (problem[j].costtime * 1.0);
-          console.log(problem[j].costtime);
         }
         else {
           problist[index].choice[chindex].percent += 1.0;
@@ -612,11 +612,7 @@ exports.getsummary = function(req, res) {
       for (var j = 0; j < problist[i].choice.length; j++) {
         problist[i].choice[j].percent /= (1.0 * sum);
       }
-      console.log("sum=" + sum);
     }
-
-    console.log("problist:");
-    console.log(problist);
 
     Course.findByCourseId(req_courseid, function(err, db_course) {
       if (err) {
