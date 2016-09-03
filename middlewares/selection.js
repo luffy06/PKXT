@@ -139,6 +139,7 @@ exports.savadata = function(req, res) {
       comment = req.query.comment;
 
     if (comment == null) {
+      console.log("costtime " + costtime);
       var ind = -1;
 
       for (var i = 0; i < problem.length; i++) {
