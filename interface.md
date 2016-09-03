@@ -180,6 +180,12 @@ data: {
 
 }
 
+returnData: {
+
+​	status
+
+}
+
 method: selection.savedata
 
 ## 课程信息列表（教师）
