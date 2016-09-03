@@ -35,6 +35,30 @@
         }
     }
     
+    @-webkit-keyframes slideOutLeft {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0)
+        }
+    }
+    
+    @keyframes slideOutLeft {
+        0% {
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0)
+        }
+        100% {
+            visibility: hidden;
+            -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0)
+        }
+    }
+    
     .animated {
         -webkit-animation-duration: 1s;
         animation-duration: 1s;
@@ -45,6 +69,11 @@
     .slideOutRight {
         -webkit-animation-name: slideOutRight;
         animation-name: slideOutRight
+    }
+    
+    .slideOutLeft {
+        -webkit-animation-name: slideOutLeft;
+        animation-name: slideOutLeft
     }
     </style>
 </head>
@@ -90,9 +119,9 @@
     <script type='text/javascript' src='/js/resultlist.js' charset='utf-8'></script>
     <script id="problemTemplate" type="text/html">
         {{each problist}}
-        <div class="card" style="display: none">
+        <div class="card cardDiv" style="display: none">
             <div class="card-header">问题{{$index+1}}
-                <p class="avgtimecost">平均用时：{{$value.​avgtimecost}}</p>
+                <p class="avgtimecost">平均用时：{{$value.avgtimecost | timeFormat}}</p>
             </div>
             <div class="card-content">
                 <div class="card-content-inner" class='questionContent'>{{$value.description}}</div>
@@ -102,7 +131,7 @@
                     <ul>
                         {{each $value.choice}}
                         <li>
-                            <p><a href="javascript:;" class="button  button-primary button-choice">{{$value.choicedesc}} ：{{$value.​percent}} %</a>
+                            <p><a href="javascript:;" class="button  button-primary button-choice">{{$value.choicedesc}} : {{$value.percent | percentFormat}} %</a>
                             </p>
                         </li>
                         {{/each}}
@@ -111,7 +140,7 @@
             </div>
         </div>
         {{/each}}
-        <div class="commentDiv" style="display:none;">
+        <div class="commentDiv cardDiv" style="display:none;">
             {{each commentlist}}
             <div class="card">
                 <div class="card-header">意见{{$index+1}}</div>
@@ -120,6 +149,12 @@
                 </div>
             </div>
             {{/each}}
+        </div>
+        <div class="content-block">
+            <div class="row">
+                <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-danger button-prev">上一题</a></div>
+                <div class="col-50"><a href="javascript:;" class="button button-big button-fill button-success button-next">下一题</a></div>
+            </div>
         </div>
     </script>
 </body>
