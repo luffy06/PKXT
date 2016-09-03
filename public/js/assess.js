@@ -102,7 +102,7 @@ $(function() {
             data: {
                 "courseid": courseid,
                 "classid":classid,
-                "courseid": courseid
+                "comment": comment
             },
             dataType: 'json',
             success: function(json){
