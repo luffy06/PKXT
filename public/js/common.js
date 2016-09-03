@@ -67,14 +67,14 @@ function startTimer($time) {
         timer;
 
     timer = setInterval(function() {
-        time += 1;
+        time += 0.1;
         hour = Math.floor(time / 3600),
             min = Math.floor((time - hour * 3600) / 60),
-            sec = time - hour * 3600 - min * 60,
+            sec = Math.floor(time - hour * 3600 - min * 60),
             formatTime = hour + 'h ' + min + 'm ' + sec + 's';
         $time.text(formatTime);
         $time.data('seconds', time);
-    }, 1000);
+    }, 100);
 
     return timer;
 }

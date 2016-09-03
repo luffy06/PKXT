@@ -44,7 +44,7 @@ $(function() {
             choiceid = $target.data('choiceid'),
             $time = $('#time'),
             costtimeText = $time.text(),
-            costtime = parseInt($time.data('seconds'), 10);
+            costtime = parseFloat($time.data('seconds')).toFixed(2) * 10;
 
         $.ajax({
             url: '/course/savedata',
