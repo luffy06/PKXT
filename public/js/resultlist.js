@@ -80,7 +80,12 @@ $(function() {
             $nextDiv.show();
         });
 
+    });
 
+
+    //返回列表页
+    $('.content').on('tap', '.button-back', function(event){
+        routerTo('courselist.html');
     });
 
 
