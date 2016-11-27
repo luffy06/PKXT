@@ -107,7 +107,7 @@ $(function() {
         //存在侧边栏的页面需要更改用户名
         var $username = $('#username');
         if ($username[0] && getStorage('ccnu_user')) {
-            var username = getStorage('ccnu_user').name;
+            var username = getStorage('ccnu_user').realName;
             $username.text(username);
         }
         if (returnStuOrTea()) {

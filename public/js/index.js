@@ -41,13 +41,15 @@ $(function() {
             success: function(json) {
                 if (json.status === "success") {
                     //返回角色，是老师还是学生
-                    var role = json.role;
+                    var role     = json.role,
+                        realName = json.name;
 
                     $.toast("登录成功!");
 
                     //数据缓存到本地
                     var user = {
                         name: name,
+                        realName: realName,
                         pass: pass,
                         role: role
                     };
