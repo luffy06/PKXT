@@ -168,7 +168,7 @@ exports.getinfo = function(req, res) {
         errormessage: err
       });
     }
-
+    console.log(req_courseid);
     // course doesn't exist
     if (course == null) {
       return res.send({
@@ -239,21 +239,22 @@ exports.getinfo = function(req, res) {
   });
 };
 
+// 获取问题列表（包括评课时，修改问题时）
 exports.getproblemlist = function(req, res) {
+  // 获取前端查询课程号，课堂号，并获取用户id
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
   var req_classid = req.body.classid;
   if (req_classid == null)
     req_classid = req.query.classid;
+  var userid = req.session.user.loginid;
+  // edit 0 表示 评课时问题数据 1 表示 修改问题问题数据
   var edit = req.body.edit;
   if (edit == null)
     edit = req.query.edit;
-  var userid = req.session.user.loginid;
 
-
-  // code repeat too much
-  // too bad
+  // 查询该课程号的课程信息
   Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
       return res.send({
@@ -262,15 +263,16 @@ exports.getproblemlist = function(req, res) {
       });
     }
 
-    // course doesn't exist
+    // 课程号不存在
     if (course == null) {
-      console.log(req_courseid + " doesn't exist!");
+      console.log("课程号 " + req_courseid + " 不存在");
       return res.send({
         status: "error",
-        errormessage: req_courseid + " doesn't exist!"
+        errormessage: "课程号 " + req_courseid + " 不存在"
       });
     }
 
+    // 获取指定课堂数据
     var index = -1;
     var userdata = course.userdata;
     for (var i = 0; i < userdata.length; i++) {
@@ -279,16 +281,16 @@ exports.getproblemlist = function(req, res) {
         break;
       }
     }
-    // classid is wrong
+    // 无法查到该课堂数据
     if (index == -1) {
-      console.log(req_classid + " doesn't exist!");
+      console.log("课堂号 " + req_classid + " 不存在");
       return res.send({
         status: "error",
-        errormessage: req_classid + " doesn't exist!"
+        errormessage: "课堂号 " + req_classid + " 不存在"
       })
     }
 
-    // get problem list
+    // 获取问题列表，删除_id标志符
     var problemlist = course.userdata[i].problem;
     for (var i = 0; i < problemlist.length; i++) {
       problemlist[i]._id = undefined;
@@ -297,10 +299,11 @@ exports.getproblemlist = function(req, res) {
       }
     }
 
-    var pid = 1;
-    if (edit == 0) {
-      Selection.findByUserIdAndCourseId(userid, req_courseid, 
-        function(err, db_data) {
+    var pid = 1; // 开始问题号
+    
+    if (edit == 0) { // 评课时获取数据
+      // 查询评课记录
+      Selection.findByUserIdAndCourseId(userid, req_courseid, function(err, db_data) {
         if (err) {
           return res.send({
             status: "error",
@@ -308,7 +311,9 @@ exports.getproblemlist = function(req, res) {
           });
         }
 
+        // 已经评过课
         if (db_data != null) {
+          // 获取评课数据
           var user_data = null;
           for (var i = 0; i < db_data.selectiondata.length; i++) {
             if (db_data.selectiondata[i].courseid == req_courseid &&
@@ -317,22 +322,27 @@ exports.getproblemlist = function(req, res) {
               break;
             }
           }
+
+          // 评课数据不为空
           if (user_data != null) {
-            if (user_data.finished == true) {
+
+            if (user_data.finished == true) { // 已完成评课
               return res.send({
                 status: "error",
                 errormessage: "这门课你已经评过了"
               })
             }
-            else {
+            else { // 未完成评课
+              // 为保持一致性，对已经评课数据和问题数据均关于问题号排序
               problemlist.sort(sortProblem);
               user_data.problem.sort(sortProblem);
+
+              // 取出已评过的数据
               var i = 0, j = 0, del = 0;
               while (i < problemlist.length && j < user_data.problem.length) {
                 if (problemlist[i].problemid == user_data.problem[j].problemid) {
                   problemlist.splice(i, 1);
                   pid++;
-                  // i++;
                   j++;
                 }
                 else if (problemlist[i].problemid < user_data.problem[j].problemid) {
@@ -342,15 +352,13 @@ exports.getproblemlist = function(req, res) {
                   j++;
                 }
               }
-              return res.send({
-                status: "success",
-                title: "ProblemList",
-                problist: problemlist,
-                startpid: pid
-              });
             }
           }
         }
+        console.log("length " + problemlist.length + " " + pid);
+        // 剩余评论未评
+        if (pid > problemlist.length)
+          pid = 0;
         return res.send({
           status: "success",
           title: "ProblemList",
@@ -359,7 +367,7 @@ exports.getproblemlist = function(req, res) {
         });
       })
     }
-    else {
+    else { // 修改问题获取评课数据
       return res.send({
         status: "success",
         title: "ProblemList",
@@ -370,10 +378,12 @@ exports.getproblemlist = function(req, res) {
   });
 }
 
-exports.getcourselist = function(req, res) {
-  var userid = req.session.user.loginid;
-  // userid = "root";
 
+exports.getcourselist = function(req, res) {
+  // 获取当前登录用户id
+  var userid = req.session.user.loginid;
+
+  // 获取该教师的课程列表
   Course.fetchByUserId(userid, function(err, courselist) {
     if (err) {
       return res.send({
@@ -382,7 +392,7 @@ exports.getcourselist = function(req, res) {
       })
     }
 
-    // get course list
+    // 获取课程列表
     var res_courselist = new Array();
     var j = 0;
     for (var i = 0; i < courselist.length; i++) {
@@ -407,7 +417,9 @@ exports.getcourselist = function(req, res) {
   });
 }
 
+// 编辑问题
 exports.editproblem = function(req, res) {
+  // 获取修改问题的问题所在的课程的课程号，课堂号，动作
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
@@ -418,6 +430,7 @@ exports.editproblem = function(req, res) {
   if (action == null)
     action = req.query.type;
   
+  // 查询该课程数据
   Course.findByCourseId(req_courseid, function(err, course) {
     if (err) {
       return res.send({
@@ -426,15 +439,15 @@ exports.editproblem = function(req, res) {
       });
     }
 
-    // course doesn't exist
+    // 课程不存在
     if (course == null) {
-      console.log(req_courseid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: req_courseid + " doesn't exist!"
+        errormessage: "课程号 " + req_courseid + " 不存在"
       });
     }
 
+    // 获取课堂数据所在课程数据内的下标
     var index = -1;
     var userdata = course.userdata;
     for (var i = 0; i < userdata.length; i++) {
@@ -445,30 +458,48 @@ exports.editproblem = function(req, res) {
     }
 
     if (index == -1) {
-      console.log(req_classid + " doesn't exist!");
       return res.send({
         status: "error",
-        errormessage: classid + "doesn't exist!"
+        errormessage: "课堂号 " + classid + " 不存在"
       })
     }
 
+    // 获取修改后的问题数据
     var problem = req.body.prob;
     if (problem == null)
       problem = req.query.prob;
+    if (problem.choice != null) {
+      // 设置选项，去除空选项
+      var choice = [];
+      for (var i = 0, j = 1; i < problem.choice.length; i++) {
+        if (problem.choice[i].choicedesc != null && problem.choice[i].choicedesc != "") {
+          var item = {};
+          item.choicedesc = problem.choice[i].choicedesc;
+          item.choiceid = j++;
+          choice.push(item);
+        }
+      }
+      problem.choice = choice;
+    }
 
-    // 1 add 2 update 3 delete
-    if (action == 1) { // add
+    // 1 添加问题 2 更新问题 3 删除问题
+    if (action == 1) { // 添加
+      // 设置问题号
       var length = userdata[index].problem.length;
-      problem.problemid = userdata[index].problem[length - 1].problemid;
+      if (length != 0)
+        problem.problemid = userdata[index].problem[length - 1].problemid;
+      else
+        problem.problemid = 0;
       problem.problemid++;
-      var choice = problem.choice;
-      for (var i = 0; i < choice.length; i++)
-        problem.choice[i].choiceid = i + 1;
+
+      // 添加数据
       course.userdata[index].problem.splice(length, 0, problem);
     }
-    else if (action == 2) { // update
+    else if (action == 2) { // 更新
+      // 获取问题号
       var problemid = problem.problemid;
 
+      // 获取该问题号在课程数据内的下标
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
@@ -476,16 +507,21 @@ exports.editproblem = function(req, res) {
           break;
         }
       }
+      // 问题号不存在
       if (ind == -1) {
         return res.send({
           status: "error",
-          errormessage: problemid + " doesn't exist"
+          errormessage: "问题号 " + problemid + " 不存在"
         })
       }
+      // 替换数据
       course.userdata[index].problem.splice(ind, 1, problem);
     }
-    else if (action == 3) { // delete
+    else if (action == 3) { // 删除
+      // 获取问题号
       var problemid = problem.problemid;
+      
+      // 获取该问题号在课程数据内的下标
       var ind = -1;
       for (var i = 0; i < userdata[index].problem.length; i++) {
         if (userdata[index].problem[i].problemid == problemid) {
@@ -493,17 +529,15 @@ exports.editproblem = function(req, res) {
           break;
         }
       }
+      // 问题号不存在
       if (ind == -1) {
         return res.send({
           status: "error",
-          errormessage: problemid + " doesn't exist"
+          errormessage: "问题号 " + problemid + " 不存在"
         })
       }
+      // 删除数据
       course.userdata[index].problem.splice(ind, 1);
-      // rearrange problemid & low efficiency
-      // for (var i = 0; i < course.userdata[index].problem.length; i++) {
-      //   course.userdata[index].problem[i].problemid = i + 1;
-      // }
     }
     else {
       console.log("cannot distinguish action: " + action);

@@ -1,65 +1,60 @@
 var mongoose = require('mongoose');
 var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
+var Async = require('async');
 
 exports.login = function(req, res) {
   var login_user = new User();
   login_user.loginid = req.body.name;
   login_user.pass = req.body.pass;
 
-  var user = new User();
-  user.loginid = "user";
-  user.name = "student";
-  user.pass = "123";
-  user.role = "student";
-  User.findOneById(user.loginid, function(err, db_user1) {
-    if (err) {
-      return res.send({
-        status: "error",
-        errormessage: err
-      });
-    }
+  var inituser = [];
+  var func = [];
 
-    if (db_user1 == null) {
-      user.save(function(err, res_user1) {
-        if (err) {
-          console.log(err);
-          return res.send({
-            status: "error",
-            errormessage: err
-          });
-        }
+  var stu = new User();
+  stu.loginid = "user";
+  stu.name = "student";
+  stu.pass = "123";
+  stu.role = "student";
+  var admin = new User();
+  admin.loginid = "root";
+  admin.name = "admin";
+  admin.pass = "123";
+  admin.role = "teacher";
 
-        var admin = new User();
-        admin.loginid = "root";
-        admin.name = "admin";
-        admin.pass = "123";
-        admin.role = "teacher";
-        User.findOneById(admin.loginid, function(err, db_user2) {
+  inituser.push(stu);
+  inituser.push(admin);
+  Async.each(inituser, function(user, next) {
+    User.findOneById(admin.loginid, function(err, db_user) {
+      if (err) {
+        return res.send({
+          status: "error",
+          errormessage: err
+        });
+      }
+
+      if (db_user == null) {
+        user.save(function(err, res_user) {
+          console.log("init user of " + user.loginid);
           if (err) {
             return res.send({
               status: "error",
               errormessage: err
             });
           }
-
-          if (db_user2 == null) {
-            admin.save(function(err, res_user2) {
-              console.log(err);
-              if (err) {
-                return res.send({
-                  status: "error",
-                  errormessage: err
-                });
-              }
-
-            });
-          }
         });
-
-      });
+      }
+    });
+    next();
+  }, function(err) {
+    if (err) {
+      return res.send({
+        stauts: "error",
+        errormessage: err
+      })
     }
-  });
+  })
+  
   
   User.findOneById(login_user.loginid, function(err, db_user) {
     if (err) {
@@ -77,7 +72,6 @@ exports.login = function(req, res) {
         errormessage: (login_user.loginid + " is not exist!")
       });
     }
-    console.log(login_user.loginid + " exist!");
 
     db_user.comparePassword(login_user.pass, function(err, isMatch) {
       if (err) {
@@ -98,11 +92,10 @@ exports.login = function(req, res) {
       else {
         // password is right
         // add session
-        console.log("success");
         req.session.user = db_user;
-        console.log(db_user.role);
         return res.send({
           status: "success",
+          name: db_user.name,
           role: db_user.role
         });
       }

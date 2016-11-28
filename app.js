@@ -12,7 +12,7 @@ var mongoStore = require('connect-mongo')(session);
 
 var dbUrl = 'mongodb://localhost/pkxt';
 
-var index = require('./routes/index');
+var init = require('./routes/init');
 var user = require('./routes/user');
 var course = require('./routes/course');
 
@@ -54,7 +54,8 @@ app.use(function(req, res, next) {
   next()
 });
 
-app.use(index);
+// 初始化数据
+// app.use(init);
 
 // 可以不需要logout，直接发送一个get请求，然后前端重定向
 // ? 不用logout的话，不需要删除session中的user么?
