@@ -25,6 +25,10 @@ $(function() {
                 $('.problemList').append(probHtml);
                 $('.card').eq(0).show();
 
+                if(!json.problist[0] && !json.startpid){
+                    $('.commentDiv').show();
+                }
+
                 timer = startTimer($("#time"));
             } else {
                 $.toast(json.errormessage);

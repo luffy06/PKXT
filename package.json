@@ -24,6 +24,7 @@
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
+    "core-util-is": "^1.0.2",
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
@@ -32,6 +33,8 @@
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-filerev": "^2.3.1",
     "grunt-usemin": "^3.1.1",
+    "inherits": "^2.0.3",
+    "isarray": "^2.0.1",
     "load-grunt-tasks": "^3.5.0"
   },
   "path": {
