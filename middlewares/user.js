@@ -3,11 +3,7 @@ var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 var Async = require('async');
 
-exports.login = function(req, res) {
-  var login_user = new User();
-  login_user.loginid = req.body.name;
-  login_user.pass = req.body.pass;
-
+inituserdata = function(res, callback) {
   var inituser = [];
   var func = [];
 
@@ -26,12 +22,7 @@ exports.login = function(req, res) {
   inituser.push(admin);
   Async.each(inituser, function(user, next) {
     User.findOneById(admin.loginid, function(err, db_user) {
-      if (err) {
-        return res.send({
-          status: "error",
-          errormessage: err
-        });
-      }
+      return err;
 
       if (db_user == null) {
         user.save(function(err, res_user) {
@@ -47,15 +38,25 @@ exports.login = function(req, res) {
     });
     next();
   }, function(err) {
+    return err;
+  })
+}
+
+exports.login = function(req, res) {
+  var login_user = new User();
+  login_user.loginid = req.body.name;
+  login_user.pass = req.body.pass;  
+  
+  // 初始化数据
+  inituserdata(function(err) {
     if (err) {
       return res.send({
         stauts: "error",
         errormessage: err
       })
     }
-  })
-  
-  
+  });
+
   User.findOneById(login_user.loginid, function(err, db_user) {
     if (err) {
       return res.send({

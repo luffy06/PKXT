@@ -96,13 +96,16 @@ function getProblem(db_prob, j, problist, commentlist, i, res) {
   getProblem(db_prob, j + 1, problist, commentlist, i, res);
 }
 
+// 获取课程信息
 exports.getinfo = function(req, res) {
+  // 获取课程号，用户号，用户角色
   var req_courseid = req.body.courseid;
   if (req_courseid == null)
     req_courseid = req.query.courseid;
   var userid = req.session.user.loginid;
   var role = req.session.user.role;
 
+  // 设置初始化数据
   var default_course = new Course();
   default_course.courseid = "1";
   default_course.coursename = "计算机网络";
@@ -168,7 +171,6 @@ exports.getinfo = function(req, res) {
         errormessage: err
       });
     }
-    console.log(req_courseid);
     // course doesn't exist
     if (course == null) {
       return res.send({

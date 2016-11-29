@@ -148,8 +148,15 @@ importcourse = function(client) {
 }
 
 exports.initdata = function(req, res) {
-  console.log("Initialize data");
+  var user = req.session.user;
+  delete req.session.user;
+  if (user.loginid != "root") { 
+    return res.send({
+      status: "success"
+    })
+  }
 
+  console.log("Initialize data");
   client.connect();
   console.log('Connected to MySQL');
 
@@ -161,23 +168,23 @@ exports.initdata = function(req, res) {
       });
     }
 
-    Async.parallel([
-      function() {
-        importstudent(client)
-      },
-      function() {
-        importteacher(client)
-      },
-      function() {
-        importcourse(client)
-      }], function(err, results) {
-      if(err) {
-        return res.send({
-          status: "error",
-          errormessage: err
-        })
-      }
-    })
+    // Async.parallel([
+    //   function() {
+    //     importstudent(client)
+    //   },
+    //   function() {
+    //     importteacher(client)
+    //   },
+    //   function() {
+    //     importcourse(client)
+    //   }], function(err, results) {
+    //   if(err) {
+    //     return res.send({
+    //       status: "error",
+    //       errormessage: err
+    //     })
+    //   }
+    // })
 
     console.log("Completed!");
     return res.send({

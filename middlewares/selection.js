@@ -7,63 +7,6 @@ var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 var Async = require('async');
 
-// function getCourse(res_courselist, i, selectiondata, j, res) {
-//   var item = {};
-//   item.courseid = selectiondata[j].courseid;
-//   item.classid = selectiondata[j].classid;
-//   Course.findByCourseId(item.courseid, function(err, db_course) {
-//     if (err) {
-//       return res.send({
-//         status: "error",
-//         errormessage: err
-//       })
-//     }
-//     if (db_course == null) {
-//       return res.send({
-//         status: "error",
-//         errormessage: item.courseid + " doesn't exist"
-//       })
-//     }
-//     var userid = -1;
-//     for (var k = 0; k < db_course.userdata.length; k++) {
-//       if (db_course.userdata[k].classid == item.classid) {
-//         userid = db_course.userdata[k].userid;
-//         break;
-//       }
-//     }
-//     if (userid == -1) {
-//       return res.send({
-//         status: "error",
-//         errormessage: "user of " + item.classid + " doesn't exist"
-//       })
-//     }
-//     item.coursename = db_course.coursename;
-//     User.findOneById(userid, function(err, db_user) {
-//       if (err) {
-//         return res.send({
-//           status: "error",
-//           errormessage: err
-//         })
-//       }
-//       item.teachername = db_user.name;
-//       if (selectiondata[j].finished == false) {
-//         res_courselist[i] = item;
-//         i++;
-//       }
-//       j++;
-//       if (j == selectiondata.length) {
-//         return res.send({
-//           status: "success",
-//           courselist: res_courselist
-//         })
-//       }
-//       else {
-//         getCourse(res_courselist, i, selectiondata, j, res);
-//       }
-//     })
-//   });
-// }
-
 exports.getunfinished = function(req, res) {
   var user = req.session.user;
 
