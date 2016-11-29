@@ -9,10 +9,6 @@ $(function() {
         success: function(json) {
             if (json.status === 'success') {
                 //不存在未完成的评课
-                if(!json.courselist.length){
-                    return;
-                }
-
                 var data = {
                         courselist: json.courselist
                     },
