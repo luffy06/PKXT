@@ -3,7 +3,8 @@ var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 var Async = require('async');
 
-inituserdata = function(res, callback) {
+// 初始化默认数据
+inituserdata = function(callback) {
   var inituser = [];
   var func = [];
 
@@ -20,29 +21,33 @@ inituserdata = function(res, callback) {
 
   inituser.push(stu);
   inituser.push(admin);
+
+  // 异步导入数据
   Async.each(inituser, function(user, next) {
-    User.findOneById(admin.loginid, function(err, db_user) {
-      return err;
+    User.findOneById(user.loginid, function(err, db_user) {
+      if (err) {
+        return callback(err);
+      }
 
       if (db_user == null) {
         user.save(function(err, res_user) {
-          console.log("init user of " + user.loginid);
           if (err) {
-            return res.send({
-              status: "error",
-              errormessage: err
-            });
+            return callback(err);
           }
         });
       }
     });
     next();
   }, function(err) {
-    return err;
+    if (err) {
+      return callback(err);
+    }
   })
 }
 
+// 用户登录
 exports.login = function(req, res) {
+  // 获取输入用户名及密码
   var login_user = new User();
   login_user.loginid = req.body.name;
   login_user.pass = req.body.pass;  
@@ -57,6 +62,7 @@ exports.login = function(req, res) {
     }
   });
 
+  // 查找该用户是否存在
   User.findOneById(login_user.loginid, function(err, db_user) {
     if (err) {
       return res.send({
@@ -65,15 +71,16 @@ exports.login = function(req, res) {
       });
     }
 
+    // 用户不存在
     if (db_user == null) {
-      // user is not exist
-      console.log(login_user.loginid + " doesn't exist!");
+      console.log("用户 " + login_user.loginid + " 不存在");
       return res.send({
         status: "error",
-        errormessage: (login_user.loginid + " is not exist!")
+        errormessage: ("用户 " + login_user.loginid + " 不存在")
       });
     }
 
+    // 用户存在，比较密码
     db_user.comparePassword(login_user.pass, function(err, isMatch) {
       if (err) {
         return res.send({
@@ -82,17 +89,15 @@ exports.login = function(req, res) {
         });
       }      
 
-      if (!isMatch) {
-        // password is wrong
-        console.log(login_user.loginid + ": password is not match!");
+      if (!isMatch) { // 密码不匹配
+        console.log("用户 " + login_user.loginid + " 密码错误");
         return res.send({
           status: "error",
-          errormessage: "Password is wrong!"
+          errormessage: "密码错误"
         });
       }
-      else {
-        // password is right
-        // add session
+      else { // 密码匹配
+        // 添加session
         req.session.user = db_user;
         return res.send({
           status: "success",
@@ -105,6 +110,7 @@ exports.login = function(req, res) {
 
 };
 
+// 用户登出
 exports.logout = function(req, res) {
   delete req.session.user;
   return res.send({

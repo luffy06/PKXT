@@ -7,11 +7,14 @@ var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 var Async = require('async');
 
+// 获取未完成的评课记录
 exports.getunfinished = function(req, res) {
+  // 获取当前登录用户
   var user = req.session.user;
 
+  // 查询该用户选课记录
   Selection.findByUserId(user.loginid, function(err, selection) {
-    var courselist = new Array();
+    // 选课记录为空
     if (selection == null || selection.selectiondata == null) {
       return res.send({
         status: "success",
@@ -19,11 +22,15 @@ exports.getunfinished = function(req, res) {
       });
     }
     
+    var courselist = new Array();
     var ct = 0;
+
+    // 异步获取未完成的选课的详细课程信息
     Async.each(selection.selectiondata, function(data, next) {
       var item = {};
       item.courseid = data.courseid;
       item.classid = data.classid;
+      // 查询某课程的详细课程信息
       Course.findByCourseId(item.courseid, function(err, db_course) {
         if (err) {
           return res.send({
@@ -56,7 +63,10 @@ exports.getunfinished = function(req, res) {
           })
         }
 
+        // 设置课程名
         item.coursename = db_course.coursename;
+
+        // 查询教师姓名
         User.findOneById(userid, function(err, db_user) {
           if (err) {
             return res.send({
@@ -65,11 +75,14 @@ exports.getunfinished = function(req, res) {
             })
           }
           
+          // 设置教师名
           item.teachername = db_user.name;
           if (data.finished == false) {
             courselist.push(item);
           }
+
           ct++;
+          // 全部完成，返回
           if (ct == selection.selectiondata.length) {
             return res.send({
               status: "success",
@@ -81,7 +94,6 @@ exports.getunfinished = function(req, res) {
       next();
     }, function(err) {
       if (err) {
-        console.log(err);
         return res.send({
           status: "error",
           errormessage: err
@@ -94,8 +106,10 @@ exports.getunfinished = function(req, res) {
 
 // 保存评课数据
 exports.savadata = function(req, res) {
+  // 获取当前登录用户
   var user = req.session.user;
 
+  // 查询该用户的选课记录
   Selection.findByUserId(user.loginid, function(err, db_selection) {
     if (err) {
       return res.send({
