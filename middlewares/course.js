@@ -1,10 +1,12 @@
 var mongoose = require('mongoose');
+var Async = require('async');
 var CourseSchema = require('../schemas/course');
 var Course = mongoose.model('course', CourseSchema);
 var UserSchema = require('../schemas/user');
 var User = mongoose.model('user', UserSchema);
 var SelectionSchema = require('../schemas/selection');
 var Selection = mongoose.model('selection', SelectionSchema);
+
 
 function sortProblem(a, b) {
   return a.problemid - b.problemid;
@@ -128,7 +130,6 @@ exports.getinfo = function(req, res) {
     // 查询用户评课记录，在课程信息查询结果中删除用户已评的课程
     Selection.findByUserIdAndCourseId(userid, req_courseid, function(err, db_data) {
       if (err) {
-        console.log(err);
         return res.send({
           status: "error",
           errormessage: err
@@ -174,18 +175,21 @@ exports.getinfo = function(req, res) {
             return err;
 
           // 未查询到教师
-          if (user == null)
-            return new Error("教师号" + loginid + "不存")
+          if (user == null) {
+            return new Error("教师号" + loginid + "不存");
+          }
           
           item.teachername = user.name;
           ct++;
+
           if (ct == res_courselist.length) {
             return res.send({
               status: "success",
               courselist: res_courselist
             })
           }
-        }
+        });
+
         next();
       }, function(err) {
         if (err) {
@@ -195,7 +199,9 @@ exports.getinfo = function(req, res) {
           })
         }
       });
+
     });
+
   });
 };
 
@@ -625,8 +631,10 @@ exports.getsummary = function(req, res) {
       for (var j = 0; j < problist[i].choice.length; j++)
         sum += problist[i].choice[j].percent;
       problist[i].avgtimecost /= (1.0 * sum);
+      problist[i].avgtimecost = Math.round(problist[i].avgtimecost * 100) / 100;
       for (var j = 0; j < problist[i].choice.length; j++) {
         problist[i].choice[j].percent /= (1.0 * sum);
+        problist[i].choice[j].percent = Math.round(problist[i].choice[j].percent * 100) / 100;
       }
     }
 
@@ -705,7 +713,7 @@ exports.getsummary = function(req, res) {
           return res.send({
             status: "success",
             problist: problist,
-            commentlist, commentlist
+            commentlist: commentlist
           });
         }
 
