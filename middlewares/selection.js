@@ -15,6 +15,7 @@ exports.getunfinished = function(req, res) {
   // 查询该用户选课记录
   Selection.findByUserId(user.loginid, function(err, selection) {
     // 选课记录为空
+    var courselist = new Array();
     if (selection == null || selection.selectiondata == null) {
       return res.send({
         status: "success",
@@ -22,7 +23,6 @@ exports.getunfinished = function(req, res) {
       });
     }
     
-    var courselist = new Array();
     var ct = 0;
 
     // 异步获取未完成的选课的详细课程信息
@@ -33,18 +33,12 @@ exports.getunfinished = function(req, res) {
       // 查询某课程的详细课程信息
       Course.findByCourseId(item.courseid, function(err, db_course) {
         if (err) {
-          return res.send({
-            status: "error",
-            errormessage: err
-          })
+          return err;
         }
 
         // 课程不存在
         if (db_course == null) {
-          return res.send({
-            status: "error",
-            errormessage: item.courseid + " doesn't exist"
-          })
+          return new Error("课程号 " + item.courseid + " 不存在");
         }
 
         // 获取用户号
@@ -69,10 +63,7 @@ exports.getunfinished = function(req, res) {
         // 查询教师姓名
         User.findOneById(userid, function(err, db_user) {
           if (err) {
-            return res.send({
-              status: "error",
-              errormessage: err
-            })
+            return err;
           }
           
           // 设置教师名
