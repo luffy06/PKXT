@@ -115,10 +115,6 @@ $(function() {
         }
     }
 
-
-
-
-
     /*侧边栏跳转功能*/
     //搜索课程scan.html
     $('.scandBtn').on('tap', function() {
@@ -134,7 +130,7 @@ $(function() {
     $('.courselistBtn').on('tap', function() {
         routerTo('courselist.html');
     });
- 
+
     //登出
     $('.logoutBtn').on('tap', function() {
         $.ajax({
@@ -145,7 +141,7 @@ $(function() {
             success: function(json) {
                 if (json.status === 'success') {
                     $.toast('登出成功');
-                    window.localStorage.clear();//删除所有保存的信息
+                    window.localStorage.clear(); //删除所有保存的信息
                     routerTo('index.html');
                 } else {
                     $.toast(json.errormessage);
@@ -158,13 +154,13 @@ $(function() {
     //滑动效果
     $.fn.slideRight = function(callback) {
         this.addClass('slideOutRight animated');
-        setTimeout(callback,1000);
+        setTimeout(callback, 1000);
     };
 
 
-    $.fn.slideLeft = function(callback){
+    $.fn.slideLeft = function(callback) {
         this.addClass('slideOutLeft animated');
-        setTimeout(callback,1000);
+        setTimeout(callback, 1000);
     }
 
 

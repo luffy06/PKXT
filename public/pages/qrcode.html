@@ -1,0 +1,126 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>二维码扫描</title>
+    <style type="text/css">
+    body {
+        width: 100%;
+        text-align: center;
+    }
+    
+    img {
+        border: 0;
+    }
+    
+    #main {
+        margin: 15px auto;
+        background: white;
+        overflow: auto;
+        width: 100%;
+    }
+    
+    #header {
+        background: white;
+        margin-bottom: 15px;
+    }
+    
+    #mainbody {
+        background: white;
+        width: 100%;
+        display: none;
+    }
+    
+    #footer {
+        background: white;
+    }
+    
+    #v {
+        width: 320px;
+        height: 240px;
+    }
+    
+    #qr-canvas {
+        display: none;
+    }
+    
+    #qrfile {
+        width: 320px;
+        height: 240px;
+    }
+    
+    #mp1 {
+        text-align: center;
+        font-size: 35px;
+    }
+        
+    .selector {
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+        margin-bottom: -5px;
+    }
+    
+    #outdiv {
+        width: 320px;
+        height: 240px;
+        border: solid;
+        border-width: 3px 3px 3px 3px;
+    }
+    
+    #result {
+        border: solid;
+        border-width: 1px 1px 1px 1px;
+        padding: 20px;
+        width: 70%;
+    }
+        
+    .tsel {
+        padding: 0;
+    }
+    </style>
+    </script>
+    <script type="text/javascript" src="/js/llqrcode.js"></script>
+    <script type="text/javascript" src="/js/webqr.js"></script>
+</head>
+
+<body>
+    <div id="main">
+        <div id="header">
+            <div style="position:relative;top:+20px;left:0px;">
+                <g:plusone size="medium"></g:plusone>
+            </div>
+            <p id="mp1">
+                二维码扫描
+            </p>
+        </div>
+        <div id="mainbody" style="display: inline;">
+            <table class="tsel" border="0" width="100%">
+                <tbody>
+                    <tr>
+                        <td valign="top" align="center" width="50%">
+                            <table class="tsel" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" align="center">
+                                            <div id="outdiv">
+                                                <video id="v" autoplay=""></video>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>&nbsp;
+    </div>
+    <canvas id="qr-canvas" width="800" height="600" style="width: 800px; height: 600px;"></canvas>
+    <script type="text/javascript">
+    load();
+    </script>
+</body>
+
+</html>

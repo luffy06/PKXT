@@ -1,8 +1,5 @@
 $(function() {
-
-
-    //查询课程
-    $("#searchbtn").on('tap', function(event) {
+    var searchHandler = function(event) {
         $("div.result").empty("div.content-block"); //清除上次
         $.showPreloader(); //加载提示
         $.ajax({
@@ -30,7 +27,22 @@ $(function() {
                 $.hidePreloader();
             }
         });
-    });
+    }
+
+    var p = getParams();
+
+    if (p) {
+        var searchcode = p.searchcode;
+
+        if (searchcode) {
+            $('#searchinput').val(searchcode);
+            searchHandler();
+        }
+    }
+
+
+    //查询课程
+    $("#searchbtn").on('tap', searchHandler);
 
     //评课
     $('.content').on('tap', '.assessBtn', function(event) {
@@ -39,9 +51,9 @@ $(function() {
             courseid = $card.find('.courseid').text(),
             classid = $card.find('.classid').text();
 
-        routerTo('assess.html',{
-            courseid:courseid,
-            classid:classid
+        routerTo('assess.html', {
+            courseid: courseid,
+            classid: classid
         });
     });
 
