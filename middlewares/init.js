@@ -185,23 +185,23 @@ exports.initdata = function(req, res) {
     }
 
     // 异步导入学生，教师，课程数据
-    Async.parallel([
-      function() {
-        importstudent(client)
-      },
-      function() {
-        importteacher(client)
-      },
-      function() {
-        importcourse(client)
-      }], function(err, results) {
-      if(err) {
-        return res.send({
-          status: "error",
-          errormessage: err
-        })
-      }
-    })
+    // Async.parallel([
+    //   function() {
+    //     importstudent(client)
+    //   },
+    //   function() {
+    //     importteacher(client)
+    //   },
+    //   function() {
+    //     importcourse(client)
+    //   }], function(err, results) {
+    //   if(err) {
+    //     return res.send({
+    //       status: "error",
+    //       errormessage: err
+    //     })
+    //   }
+    // })
 
     return res.send({
       status: "success"
