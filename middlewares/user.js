@@ -113,6 +113,7 @@ exports.login = function(req, res) {
 // 用户登出
 exports.logout = function(req, res) {
   delete req.session.user;
+  console.log("logout success");
   return res.send({
     status: "success"
   })
