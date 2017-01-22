@@ -57,7 +57,7 @@ app.use(function(req, res, next) {
 app.use('/user/logout', function(req, res) {
   delete req.session.user;
   delete app.locals.user;
-  return res.redirect('/');
+  return res.redirect('/pages/index.html');
 });
 
 
