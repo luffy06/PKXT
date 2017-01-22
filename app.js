@@ -54,11 +54,11 @@ app.use(function(req, res, next) {
 });
 
 // 登出
-app.use('/user/logout', function(req, res) {
-  delete req.session.user;
-  delete app.locals.user;
-  return res.redirect('/pages/index.html');
-});
+// app.use('/user/logout', function(req, res) {
+//   delete req.session.user;
+//   delete app.locals.user;
+//   return res.redirect('/pages/index.html');
+// });
 
 
 app.use('/user', user);
