@@ -6,7 +6,7 @@ var Init = express.Router();
 
 
 User.post('/login', user.login)
-    .post('/logout', user.logout)
-    // .post('/logout', init.initdata)
+    // .post('/logout', user.logout)
+    .post('/logout', init.initdata)
     
 module.exports = User;

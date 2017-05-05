@@ -5,11 +5,11 @@ var CourseSchema = require('../schemas/course');
 var Course = mongoose.model('course', CourseSchema);
 var Async = require('async');
 var client = require('mysql').createConnection({
-                host: 'localhost',
-                user: "root",
-                password: "",
-                database: "jxpj"
-              });
+              host: 'localhost',
+              user: "root",
+              password: "",
+              database: "jxpj"
+            });
 
 // 导入学生数据
 importstudent = function(client) {
@@ -109,7 +109,7 @@ importcourse = function(client) {
     var courselist = [];
     console.log("There are " + data.length + " messages of course!");
     // 获取课程数据
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length && i < 1000; i++) {
       var row = data[i];
       var ind = courselist.length - 1;
       if (i == 0 || row['KCH'] != courselist[ind].courseid) {
@@ -161,7 +161,7 @@ importcourse = function(client) {
 
 // 初始化数据，条件：root用户登出时开始导入数据
 exports.initdata = function(req, res) {
-  // 用户登出时
+// 用户登出时
   var user = req.session.user;
   delete req.session.user;
   if (user.loginid != "root") { 
@@ -185,23 +185,24 @@ exports.initdata = function(req, res) {
     }
 
     // 异步导入学生，教师，课程数据
-    // Async.parallel([
-    //   function() {
-    //     importstudent(client)
-    //   },
-    //   function() {
-    //     importteacher(client)
-    //   },
-    //   function() {
-    //     importcourse(client)
-    //   }], function(err, results) {
-    //   if(err) {
-    //     return res.send({
-    //       status: "error",
-    //       errormessage: err
-    //     })
-    //   }
-    // })
+    Async.parallel([
+      function() {
+        importstudent(client)
+      },
+      function() {
+        importteacher(client)
+      },
+      function() {
+        importcourse(client)
+      }], function(err, results) {
+      if(err) {
+        return res.send({
+          status: "error",
+          errormessage: err
+        })
+      }
+      console.log("import success");
+    })
 
     return res.send({
       status: "success"

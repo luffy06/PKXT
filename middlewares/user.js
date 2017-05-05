@@ -53,14 +53,14 @@ exports.login = function(req, res) {
   login_user.pass = req.body.pass;  
   
   // 初始化数据
-  // inituserdata(function(err) {
-  //   if (err) {
-  //     return res.send({
-  //       stauts: "error",
-  //       errormessage: err
-  //     })
-  //   }
-  // });
+  inituserdata(function(err) {
+    if (err) {
+      return res.send({
+        stauts: "error",
+        errormessage: err
+      })
+    }
+  });
 
   // 查找该用户是否存在
   User.findOneById(login_user.loginid, function(err, db_user) {
